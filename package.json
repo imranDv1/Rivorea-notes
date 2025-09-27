@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-     "build": "prisma generate && next build --turbopack",
+    "build": "prisma generate && next build --turbopack",
     "start": "next start",
     "lint": "eslint"
   },
@@ -59,6 +59,7 @@
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.23.22",
     "lodash.throttle": "^4.1.1",
     "lucide-react": "^0.544.0",
     "motion": "^12.23.16",
