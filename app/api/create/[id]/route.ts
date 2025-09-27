@@ -1,5 +1,5 @@
 import { PrismaClient } from "@/lib/generated/prisma";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
@@ -16,13 +16,8 @@ function getPublicIdFromUrl(url: string) {
   return publicId;
 }
 
-type tParams = { id: string };
-
-export async function DELETE(
-  request: Request,
-props: { params: tParams }
-) {
-    const { id } = props.params;
+export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params;
   if (!id) {
     return NextResponse.json({ message: "Note ID is required" }, { status: 400 });
   }
@@ -30,11 +25,9 @@ props: { params: tParams }
   const prisma = new PrismaClient();
 
   try {
-    // 1. جلب noteBody المرتبط
     const noteBody = await prisma.noteBody.findUnique({ where: { noteId: id } });
 
     if (noteBody?.images && noteBody.images.length > 0) {
-      // 2. حذف كل الصور من Cloudinary
       for (const url of noteBody.images) {
         try {
           const publicId = getPublicIdFromUrl(url);
@@ -45,7 +38,6 @@ props: { params: tParams }
       }
     }
 
-    // 3. حذف الملاحظة نفسها (مع noteBody)
     await prisma.noteBody.deleteMany({ where: { noteId: id } });
     await prisma.note.delete({ where: { id } });
 
