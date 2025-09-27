@@ -8,16 +8,19 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Helper: extract Cloudinary public_id from secure_url
 function getPublicIdFromUrl(url: string) {
-  const parts = url.split("/"); 
-  const folderAndFile = parts.slice(-2).join("/"); // e.g., notes/myimage.jpg
-  const publicId = folderAndFile.replace(/\.[^/.]+$/, ""); // remove extension
+  const parts = url.split("/");
+  const folderAndFile = parts.slice(-2).join("/");
+  const publicId = folderAndFile.replace(/\.[^/.]+$/, "");
   return publicId;
 }
 
-export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
-  const { id } = context.params;
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> } // 👈 هذا مهم
+) {
+  const { id } = await context.params; // 👈 يجب انتظار الـ Promise
+
   if (!id) {
     return NextResponse.json({ message: "Note ID is required" }, { status: 400 });
   }
@@ -27,7 +30,7 @@ export async function DELETE(request: NextRequest, context: { params: { id: stri
   try {
     const noteBody = await prisma.noteBody.findUnique({ where: { noteId: id } });
 
-    if (noteBody?.images && noteBody.images.length > 0) {
+    if (noteBody?.images?.length) {
       for (const url of noteBody.images) {
         try {
           const publicId = getPublicIdFromUrl(url);
