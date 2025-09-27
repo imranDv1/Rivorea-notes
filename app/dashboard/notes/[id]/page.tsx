@@ -7,9 +7,9 @@ import React from 'react'
 
 type tParams = { id: string };
 
-const  page = async (props: { params: tParams}) => {
-  const {id} = props.params
-
+const  page = async (props: { params: tParams }) => {
+    const { id } = props.params;
+    
   const notes = await prisma.note.findUnique({
     where : {
       id : id

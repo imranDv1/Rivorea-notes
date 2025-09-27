@@ -16,11 +16,13 @@ function getPublicIdFromUrl(url: string) {
   return publicId;
 }
 
+type tParams = { id: string };
+
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+props: { params: tParams }
 ) {
-  const { id } = params;
+    const { id } = props.params;
   if (!id) {
     return NextResponse.json({ message: "Note ID is required" }, { status: 400 });
   }
