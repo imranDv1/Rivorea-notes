@@ -6,7 +6,6 @@ import { TextEffect } from "@/components/ui/text-effect";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { HeroHeader } from "./header";
 import type { Variants } from "framer-motion";
-import { ThemeToggle } from "./ThemeToggle";
 
 // Variants for AnimatedGroup items
 const itemVariants: Variants = {
