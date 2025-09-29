@@ -80,6 +80,7 @@ import "@/components/tiptap-templates/simple/simple-editor.scss";
 import { toast } from "sonner";
 import { JsonValue } from "@/lib/generated/prisma/runtime/library";
 import Link from "next/link";
+import CustomButton from "@/components/CustomButton";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -322,6 +323,9 @@ export function SimpleEditor({ noteId, content }: EditorProps) {
             <ShadcnButton variant="outline" onClick={() => setEdit(!edit)}>
               {edit ? "Close Edit" : "Edit"}
             </ShadcnButton>
+
+<CustomButton/>
+
           </div>
         ) : null}
 

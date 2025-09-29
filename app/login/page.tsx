@@ -1,6 +1,6 @@
 import LoginPage from "@/components/login";
 import React from "react";
-
+  
 const Login = () => {
   return (
     <div className="w-full h-screen overflow-hidden flex items-center justify-center relative">

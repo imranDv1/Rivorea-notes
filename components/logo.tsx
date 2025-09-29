@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils'
-import Image from 'next/image'
+import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export const Logo = ({ className }: { className?: string }) => {
   return (
@@ -8,27 +8,31 @@ export const Logo = ({ className }: { className?: string }) => {
       alt="Logo"
       width={100}
       height={100}
-      className={cn('h-12 w-auto', className)}
+      className={cn("h-12 w-auto", className)}
     />
-  )
-}
+  );
+};
 
 export const LogoIcon = ({ className }: { className?: string }) => {
   return (
     <Image
       src="/icons/logo.png"
       alt="Logo Icon"
-      className={cn('size-12', className)}
+      className={cn("size-12", className)}
+      width={100}
+      height={100}
     />
-  )
-}
+  );
+};
 
 export const LogoStroke = ({ className }: { className?: string }) => {
   return (
     <Image
       src="/icons/logo.png"
       alt="Logo Stroke"
-      className={cn('w-10 h-10', className)}
+      className={cn("w-10 h-10", className)}
+      width={100}
+      height={100}
     />
-  )
-}
+  );
+};

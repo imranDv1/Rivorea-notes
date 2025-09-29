@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { FilePlus2, Loader2, Star, Trash2, X } from "lucide-react";
+import { FilePlus2, Loader2, Search, Star, Trash2, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -304,6 +304,7 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
 
   return (
     <div className="w-full flex flex-col gap-5">
+
       {/* Create Note Button & Dialog */}
       <div className="w-full flex justify-between">
         <h1 className="text-3xl font-bold">Notebooks</h1>
