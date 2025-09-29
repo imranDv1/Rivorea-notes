@@ -73,7 +73,7 @@ import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
-import { CornerDownLeft, Save } from "lucide-react";
+import { CornerDownLeft, Edit, Loader2, Save } from "lucide-react";
 
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
@@ -150,12 +150,6 @@ const MainToolbarContent = ({
         <ImageUploadButton />
       </ToolbarGroup>
 
-      <ToolbarGroup>
-        <ShadcnButton size="sm" onClick={onSave}>
-          <Save /> Save
-        </ShadcnButton>
-      </ToolbarGroup>
-
       <Spacer />
 
       {isMobile && <ToolbarSeparator />}
@@ -207,7 +201,10 @@ export function SimpleEditor({ noteId, content }: EditorProps) {
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
   const [uploadedFiles, setUploadedFiles] = React.useState<File[]>([]);
- const [edit, setEdit] = React.useState(!content || (typeof content === "object" && Object.keys(content).length === 0));
+  const [edit, setEdit] = React.useState(
+    !content ||
+      (typeof content === "object" && Object.keys(content).length === 0)
+  );
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -282,10 +279,12 @@ export function SimpleEditor({ noteId, content }: EditorProps) {
     if (!isMobile && mobileView !== "main") setMobileView("main");
   }, [isMobile, mobileView]);
 
+  const [SaveLoading, setLoading] = React.useState(false);
+
   const handleSave = async () => {
     if (!editor) return;
     const contentJSON = JSON.stringify(editor.getJSON());
-
+    setLoading(true);
     const formData = new FormData();
     formData.append("noteId", noteId);
     formData.append("content", contentJSON);
@@ -300,24 +299,50 @@ export function SimpleEditor({ noteId, content }: EditorProps) {
     });
     const data = await res.json();
     if (data.success) {
-      toast.success("Note saved successfully!"); 
-      window.location.reload()
+      toast.success("Note saved successfully!");
+      setLoading(false);
+
+      window.location.reload();
+    } else {
+      toast.error("Error: " + data.error);
+      setLoading(false);
     }
-    else toast.error("Error: " + data.error);
   };
 
   return (
     <div className="w-[95%]">
-      {content ? (
-       <div className="w-full flex justify-between">
-        <Link className={buttonVariants({variant:"outline"})} href='/dashboard/create'>
-        <CornerDownLeft />
-        </Link>
-         <ShadcnButton variant='outline' onClick={() => setEdit(!edit)}>
-          {edit ? "Close Edit" : "Edit"}
-        </ShadcnButton>
-       </div>
-      ) : null}
+      <div className="w-full flex justify-end">
+        {content ? (
+          <div className="flex items-center gap-5">
+            <Link
+              className={buttonVariants({ variant: "outline" })}
+              href="/dashboard/create"
+            >
+              <CornerDownLeft />
+            </Link>
+            <ShadcnButton variant="outline" onClick={() => setEdit(!edit)}>
+              {edit ? "Close Edit" : "Edit"}
+            </ShadcnButton>
+          </div>
+        ) : null}
+
+        {edit ? (
+          <div className="">
+            <ShadcnButton disabled={SaveLoading} size="sm" onClick={handleSave}>
+              {SaveLoading ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  <span>Saving....</span>
+                </>
+              ) : (
+                <>
+                  <Save /> Save
+                </>
+              )}
+            </ShadcnButton>
+          </div>
+        ) : null}
+      </div>
       <EditorContext.Provider value={{ editor }}>
         {edit && (
           <Toolbar

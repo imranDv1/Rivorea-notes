@@ -33,32 +33,28 @@ import Link from "next/link"
 import { authClient } from "@/lib/auth-client"
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+ 
   navMain: [
     {
       title: "All Notes",
       url: "/dashboard/create",
       icon: Files,
     },
-    {
-      title: "PDF Summarizer",
-      url: "#",
-      icon: FileText,
-    },
-    {
-      title: "To-Do",
-      url: "#",
-      icon: ClipboardCheck,
-    },
-    {
-      title: "Workspaces",
-      url: "#",
-      icon: IconFolder,
-    },
+    // {
+    //   title: "PDF Summarizer",
+    //   url: "#",
+    //   icon: FileText,
+    // },
+    // {
+    //   title: "To-Do",
+    //   url: "#",
+    //   icon: ClipboardCheck,
+    // },
+    // {
+    //   title: "Workspaces",
+    //   url: "#",
+    //   icon: IconFolder,
+    // },
    
   ],
   navClouds: [

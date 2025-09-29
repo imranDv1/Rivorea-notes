@@ -44,7 +44,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { PrismaClient } from "@/lib/generated/prisma";
 
 const formSchema = z.object({
   title: z.string().min(5),
@@ -157,17 +156,17 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
         const updatedTags = [...tags, newTag];
         setTags(updatedTags);
         form.setValue("category", updatedTags);
+        editForm.setValue("category", updatedTags); // ✅ sync edit form too
         setInputValue("");
       }
     }
   };
 
-  const [filled, setFilled] = useState(false);
-
   const removeTag = (tag: string) => {
     const updatedTags = tags.filter((t) => t !== tag);
     setTags(updatedTags);
     form.setValue("category", updatedTags);
+    editForm.setValue("category", updatedTags); // ✅ sync edit form too
   };
 
   const handleDeleteClick = (noteId: string) => {
@@ -237,13 +236,12 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
         if (!res.ok) throw new Error("Failed to fetch favorites");
 
         const favorites = await res.json();
-        // favorites عبارة عن مصفوفة تحتوي noteId
         const favMap: Record<string, boolean> = {};
         favorites.forEach((fav: any) => {
           favMap[fav.noteId] = true;
         });
 
-        setFavoriteStatus(favMap); // هنا نحدث حالة المفضلة
+        setFavoriteStatus(favMap);
       } catch (err) {
         console.error("Error fetching favorites:", err);
       }
@@ -253,6 +251,56 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
   }, [userId]);
 
   const [isOpen, setIsOpen] = useState(false);
+
+  // ✅ Edit Dialog States
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [noteToEdit, setNoteToEdit] = useState<Note | null>(null);
+
+  const editForm = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { title: "", description: "", category: [] },
+  });
+
+  const handleEditClick = (note: Note) => {
+    setNoteToEdit(note);
+    editForm.reset({
+      title: note.title,
+      description: note.description,
+      category: note.category,
+    });
+    setTags(note.category);
+    setEditDialogOpen(true);
+  };
+
+  const handleEditSubmit = async (values: z.infer<typeof formSchema>) => {
+    const data = {
+      title: values.title,
+      description: values.description,
+      category: values.category,
+      id: noteToEdit?.id,
+      userId,
+    };
+    if (!noteToEdit) return;
+    setLoading(true);
+    try {
+      //  fix it the user id and noteIdd  make the put request in [id] fuildder
+
+      const res = await fetch(`/api/create/editNote`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed to update note");
+
+      toast.success("Note updated successfully");
+      setEditDialogOpen(false);
+      window.location.reload();
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full flex flex-col gap-5">
@@ -413,7 +461,13 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
                 <Link href={`notes/${note.id}`} className={buttonVariants()}>
                   View
                 </Link>
-                <Button variant='ghost' className="hover:cursor-pointer">Edit</Button>
+                <Button
+                  variant="ghost"
+                  className="hover:cursor-pointer"
+                  onClick={() => handleEditClick(note)}
+                >
+                  Edit
+                </Button>
               </div>
 
               <Tooltip>
@@ -447,6 +501,105 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
         onConfirm={handleConfirmDelete}
         loading={deleteLoading !== null}
       />
+
+      {/* ✅ Edit Note Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Notebook</DialogTitle>
+            <DialogDescription>Update your note details.</DialogDescription>
+          </DialogHeader>
+
+          <Form {...editForm}>
+            <form
+              onSubmit={editForm.handleSubmit(handleEditSubmit)}
+              className="space-y-6"
+            >
+              <FormField
+                control={editForm.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Note Title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={editForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Write a short description"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={editForm.control}
+                name="category"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Add tag and press Enter"
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        disabled={tags.length >= maxTags}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex flex-wrap gap-2 mb-2">
+                {tags.map((tag, idx) => (
+                  <Badge
+                    key={idx}
+                    variant="outline"
+                    className="flex items-center gap-2 px-2 py-1"
+                  >
+                    {tag}
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => removeTag(tag)}
+                    >
+                      <X className="w-3 h-3" />
+                    </Button>
+                  </Badge>
+                ))}
+              </div>
+
+              <DialogFooter>
+                <Button type="submit" disabled={loading} className="w-full">
+                  {loading ? (
+                    <Loader2 className="animate-spin size-4" />
+                  ) : (
+                    "Save Changes"
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
