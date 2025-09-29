@@ -41,9 +41,8 @@ const RichTextEditor = ({ content, noteId }: RichTextEditorProps) => {
     autofocus: true,
     editable: true,
     injectCSS: false,
-    onUpdate: ({ editor }) => {
+    onUpdate: ({  }) => {
       if (noteId) {
-        const content = editor.getJSON();
         // save content here
       }
     },

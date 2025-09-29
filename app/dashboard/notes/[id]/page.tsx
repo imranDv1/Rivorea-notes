@@ -1,4 +1,3 @@
-import Tiptap from '@/components/Tiptap';
 import { SimpleEditor } from '@/components/tiptap-templates/simple/simple-editor';
 
 import { prisma } from '@/lib/db';

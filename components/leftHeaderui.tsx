@@ -7,7 +7,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const LeftHeaderui = () => {
-  const { data: sessiom, isPending } = authClient.useSession();
+  const { data: sessiom } = authClient.useSession();
   const [isScrolled, setIsScrolled] = React.useState(false);
 
   React.useEffect(() => {

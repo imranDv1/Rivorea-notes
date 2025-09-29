@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
-import Image from "next/image";
 import { redirect } from "next/navigation";
 import React, { useTransition } from "react";
 import { toast } from "sonner";

@@ -40,21 +40,21 @@ const data = {
       url: "/dashboard/create",
       icon: Files,
     },
-    // {
-    //   title: "PDF Summarizer",
-    //   url: "#",
-    //   icon: FileText,
-    // },
-    // {
-    //   title: "To-Do",
-    //   url: "#",
-    //   icon: ClipboardCheck,
-    // },
-    // {
-    //   title: "Workspaces",
-    //   url: "#",
-    //   icon: IconFolder,
-    // },
+    {
+      title: "PDF Summarizer",
+      url: "#",
+      icon: FileText,
+    },
+    {
+      title: "To-Do",
+      url: "#",
+      icon: ClipboardCheck,
+    },
+    {
+      title: "Workspaces",
+      url: "#",
+      icon: IconFolder,
+    },
    
   ],
   navClouds: [

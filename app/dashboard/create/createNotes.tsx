@@ -140,7 +140,7 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
       toast.success("Note created successfully");
       setIsOpen(false);
       window.location.reload();
-    } catch (err) {
+    } catch  {
       toast.error("Failed to create note");
       setIsOpen(false);
     } finally {
@@ -357,7 +357,7 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
                 <FormField
                   control={form.control}
                   name="category"
-                  render={({ field }) => (
+                  render={({ }) => (
                     <FormItem>
                       <FormLabel>Category</FormLabel>
                       <FormControl>

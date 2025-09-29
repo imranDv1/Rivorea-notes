@@ -30,7 +30,7 @@ export const HeroHeader = () => {
         return () => unsubscribe()
     }, [scrollYProgress])
 
-    const {data:sessiom , isPending} = authClient.useSession()
+    const {data:sessiom } = authClient.useSession()
 
     return (
         <header>

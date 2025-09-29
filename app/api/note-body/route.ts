@@ -71,7 +71,7 @@ export async function POST(request: Request) {
     let content: any;
     try {
       content = JSON.parse(contentStr);
-    } catch (e) {
+    } catch {
       return NextResponse.json({ success: false, error: "Invalid content JSON" }, { status: 400 });
     }
 
