@@ -73,7 +73,7 @@ import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
-import { CornerDownLeft,  Loader2, Save } from "lucide-react";
+import { CornerDownLeft, Loader2, Save } from "lucide-react";
 
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
@@ -311,7 +311,7 @@ export function SimpleEditor({ noteId, content }: EditorProps) {
 
   return (
     <div className="w-[95%]">
-      <div className="w-full flex justify-end">
+      <div className="w-full flex justify-end gap-4 items-center">
         {content ? (
           <div className="flex items-center gap-5">
             <Link
@@ -324,8 +324,7 @@ export function SimpleEditor({ noteId, content }: EditorProps) {
               {edit ? "Close Edit" : "Edit"}
             </ShadcnButton>
 
-<CustomButton/>
-
+            <CustomButton />
           </div>
         ) : null}
 
