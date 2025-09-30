@@ -76,17 +76,21 @@ export async function POST(request: Request) {
     }
 
     // Check if content is effectively empty
-    const isEmptyContent =
-      content.type === "doc" &&
-      Array.isArray(content.content) &&
-      content.content.length === 1 &&
-      content.content[0].type === "paragraph" &&
-      (!content.content[0].attrs || content.content[0].attrs.textAlign === null);
+   const isEmptyContent =
+  content.type === "doc" &&
+  Array.isArray(content.content) &&
+  content.content.length === 1 &&
+  content.content[0].type === "paragraph" &&
+  (
+    !content.content[0].content || // ما فيه أي نص
+    content.content[0].content.every((c: any) =>
+      c.type === "text" && (!c.text || c.text.trim() === "")
+    )
+  );
 
-    if (isEmptyContent) {
-      content = null;
-    }
-
+if (isEmptyContent) {
+  content = null;
+}
     // Extract external links
     const links = content ? extractLinksFromContent(content) : [];
 
