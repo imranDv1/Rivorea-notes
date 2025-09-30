@@ -11,20 +11,25 @@ export default function SuccessPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // استرجاع sessionId مرة واحدة فقط
     const sessionId = searchParams.get("session_id");
+
     if (!sessionId) {
       alert("No session ID provided");
       router.push("/");
       return;
     }
 
-    fetch("/api/subscribe/success", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId }),
-    })
-      .then(res => res.json())
-      .then(data => {
+    const saveSubscription = async () => {
+      try {
+        const res = await fetch("/api/subscribe/success", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId }),
+        });
+
+        const data = await res.json();
+
         if (data.success) {
           alert("Subscription successful!");
           router.push("/dashboard");
@@ -32,9 +37,22 @@ export default function SuccessPage() {
           alert(data.message || "Failed to save subscription");
           router.push("/");
         }
-      })
-      .finally(() => setLoading(false));
-  }, [searchParams, router]);
+      } catch (err) {
+        console.error("Subscription error:", err);
+        alert("Network error, please try again.");
+        router.push("/");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  return <div>{loading ? "Processing your subscription..." : "Done!"}</div>;
+    saveSubscription();
+    // نزيل searchParams من الـ dependency array لتجنب إعادة التشغيل غير الضرورية
+  }, [router, searchParams]);
+
+  return (
+    <div className="flex items-center justify-center min-h-screen text-center">
+      {loading ? "Processing your subscription..." : "Done!"}
+    </div>
+  );
 }
