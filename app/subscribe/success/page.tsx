@@ -1,17 +1,16 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function SuccessPage() {
+function SuccessPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const sessionId = searchParams.get("session_id");
+
     if (!sessionId) {
       alert("No session ID provided");
       router.push("/");
@@ -45,11 +44,19 @@ export default function SuccessPage() {
     };
 
     saveSubscription();
-  }, [router]); // ❌ لا تضع searchParams هنا
+  }, [router, searchParams]);
 
   return (
     <div className="flex items-center justify-center min-h-screen text-center">
       {loading ? "Processing your subscription..." : "Done!"}
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SuccessPageContent />
+    </Suspense>
   );
 }
