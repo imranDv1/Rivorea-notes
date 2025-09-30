@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@/lib/generated/prisma";
-import { gemini, model, generateNoteBody } from "@/lib/gemini";
+import { generateNoteBody } from "@/lib/gemini";
 
 const prisma = new PrismaClient();
 
@@ -16,14 +16,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "title is required" }, { status: 400 });
     }
 
-    // جلب الاشتراك الخاص بالمستخدم
-    const subscription = await prisma.subscription.findUnique({
-      where: { userId },
-    });
+    // التحقق إذا كان لدى المستخدم أي اشتراك
+    let hasSubs = false;
+    if (userId) {
+      const subs = await prisma.subscription.findMany({
+        where: { userId },
+      });
+      hasSubs = subs.length > 0;
+    }
 
-    if (!subscription || subscription.type !== "PRO") {
+    if (!hasSubs) {
       return NextResponse.json(
-        { message: "Only Pro users can use this AI feature" },
+        { message: "You need an active subscription to use this feature" },
         { status: 403 }
       );
     }
