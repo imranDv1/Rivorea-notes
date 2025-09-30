@@ -36,3 +36,4 @@ export default function SuccessPage() {
 
   return <div>{loading ? "Processing your subscription..." : "Done!"}</div>;
 }
+
