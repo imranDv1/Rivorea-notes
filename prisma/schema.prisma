@@ -26,7 +26,7 @@ model User {
   accounts      Account[]
   Note          Note[]
   FavoriteNote  FavoriteNote[]
-
+  subscription  Subscription?  
   @@unique([email])
   @@map("user")
 }
@@ -109,3 +109,17 @@ model FavoriteNote {
   @@unique([userId, noteId]) // لضمان عدم تكرار نفس الملاحظة كمفضلة لنفس المستخدم
   @@map("favorite_note")
 }
+
+
+model Subscription {
+  id        String    @id @default(uuid())
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+  isActive  Boolean   @default(true) // <-- new field
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String    @unique
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+}
+
