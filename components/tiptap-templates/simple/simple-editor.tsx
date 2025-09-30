@@ -324,12 +324,14 @@ export function SimpleEditor({ noteId, content }: EditorProps) {
               {edit ? "Close Edit" : "Edit"}
             </ShadcnButton>
 
-            <CustomButton />
+       
           </div>
         ) : null}
 
         {edit ? (
-          <div className="">
+          <div className="flex items-center gap-2 ">
+                 <CustomButton />
+
             <ShadcnButton disabled={SaveLoading} size="sm" onClick={handleSave}>
               {SaveLoading ? (
                 <>
