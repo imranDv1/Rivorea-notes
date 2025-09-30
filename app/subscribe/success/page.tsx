@@ -11,9 +11,7 @@ export default function SuccessPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // استرجاع sessionId مرة واحدة فقط
     const sessionId = searchParams.get("session_id");
-
     if (!sessionId) {
       alert("No session ID provided");
       router.push("/");
@@ -47,8 +45,7 @@ export default function SuccessPage() {
     };
 
     saveSubscription();
-    // نزيل searchParams من الـ dependency array لتجنب إعادة التشغيل غير الضرورية
-  }, [router, searchParams]);
+  }, [router]); // ❌ لا تضع searchParams هنا
 
   return (
     <div className="flex items-center justify-center min-h-screen text-center">
