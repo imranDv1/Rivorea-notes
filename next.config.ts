@@ -9,10 +9,13 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/u/**",
       },
-      // تضيف نماذج ثانية حسب الدومينات اللي تستخدمها
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        port: "",
+        pathname: "/**",
+      },
     ],
-    // يمكن تضيف unoptimized إذا تحب تعطل تحسين الصور:
-    // unoptimized: true,
   },
 };
 
