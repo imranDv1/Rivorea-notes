@@ -22,14 +22,16 @@ import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
+  name: z.string().min(3),
   email: z.email(),
   password: z.string().min(8),
 });
 
-export default function LoginPage() {
+export default function SignUpPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name:"",
       email: "",
       password: "",
     },
@@ -133,6 +135,20 @@ export default function LoginPage() {
               >
                 <FormField
                   control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your full name" {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                      <FormField
+                  control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
@@ -175,9 +191,9 @@ export default function LoginPage() {
         </div>
 
         <p className="text-accent-foreground text-center text-sm">
-          Don&apos;t have an account ?
+          Already have an account ? go
           <Button asChild variant="link" className="px-2">
-            <Link href="/signUp">Create account</Link>
+            <Link href="/login">login</Link>
           </Button>
         </p>
       </div>
