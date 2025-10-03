@@ -1,24 +1,16 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
-import { authClient } from "@/lib/auth-client";
-import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { Copy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 
-const AI_AVATAR = "/icons/ai.jpeg";
-const PLACEHOLDER_AVATAR =
-  "https://api.dicebear.com/7.x/lorelei/svg?seed=user&backgroundColor=transparent";
+const AI_AVATAR = "/icons/note ai.png";
+const PLACEHOLDER_AVATAR = "https://api.dicebear.com/7.x/lorelei/svg?seed=user&backgroundColor=transparent";
 
 const CustomButton = () => {
   const { data: session } = authClient.useSession();
@@ -28,105 +20,57 @@ const CustomButton = () => {
 
   const [title, setTitle] = useState("");
   const [messages, setMessages] = useState([
-    {
-      from: "ai",
-      name: "NoteBuddy",
-      avatar: AI_AVATAR,
-      text: "Hello! How can I help you today?",
-    },
+    { from: "ai", name: "NoteBuddy", avatar: AI_AVATAR, text: "Hello! How can I help you today?" }
   ]);
   const [loading, setLoading] = useState(false);
-
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  // ✅ Auto-scroll to bottom whenever messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  async function handleSubmit() {
-    if (!title || loading) return;
-    const userMsg = {
-      from: "user",
-      name: userName,
-      avatar: userImage,
-      text: title,
-    };
-    setMessages((prev) => [...prev, userMsg]);
+  const handleSubmit = async () => {
+    if (!title.trim() || loading) return;
+
+    const userMsg = { from: "user", name: userName, avatar: userImage, text: title };
+    setMessages(prev => [...prev, userMsg]);
     setTitle("");
     setLoading(true);
 
- try {
-  const res = await fetch("/api/ai", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId: user?.id, title }),
-  });
-  const data = await res.json();
+    try {
+      const res = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user?.id, title }),
+      });
+      const data = await res.json();
 
-  if (!res.ok) {
-    // Show backend message to the user
-    setMessages((prev) => [
-      ...prev,
-      {
-        from: "ai",
-        name: "NoteBuddy",
-        avatar: AI_AVATAR,
-        text: data.message || "Something went wrong.",
-      },
-    ]);
-    return;
-  }
+      if (!res.ok) throw new Error(data.message || "Something went wrong");
+      if (!data.body) throw new Error("AI response invalid");
 
-  if (!data.body) throw new Error("AI response invalid");
-
-  setMessages((prev) => [
-    ...prev,
-    {
-      from: "ai",
-      name: "NoteBuddy",
-      avatar: AI_AVATAR,
-      text: data.body.trim(),
-    },
-  ]);
-} catch (err) {
-  console.error("AI error:", err);
-  toast.error("AI error, please try again.");
-  setMessages((prev) => [
-    ...prev,
-    {
-      from: "ai",
-      name: "NoteBuddy",
-      avatar: AI_AVATAR,
-      text: "Sorry, there was an error. Please try again.",
-    },
-  ]);
-} finally {
-  setLoading(false);
-}
-
-  }
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" && !loading) {
-      handleSubmit();
+      setMessages(prev => [...prev, { from: "ai", name: "NoteBuddy", avatar: AI_AVATAR, text: data.body.trim() }]);
+    } catch (err) {
+      console.error(err);
+      toast.error("AI error, please try again.");
+      setMessages(prev => [...prev, { from: "ai", name: "NoteBuddy", avatar: AI_AVATAR, text: "Sorry, there was an error. Please try again." }]);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
-  // ✅ Copy response to clipboard in clean markdown style
-  function copyToClipboard(text: string) {
-    const formatted = text.replace(/\n{3,}/g, "\n\n").replace(/\t/g, "  ");
-    navigator.clipboard.writeText(formatted).then(() => {
-      toast.success("Copied to notes ✅");
-    });
-  }
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !loading) handleSubmit();
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text.replace(/\n{3,}/g, "\n\n").replace(/\t/g, "  "));
+    toast.success("Copied to notes ✅");
+  };
 
   return (
-    <Dialog >
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <DialogTrigger asChild>
-          <button className="hover:cursor-pointer group relative dark:bg-neutral-800 bg-neutral-200 p-px overflow-hidden rounded-xl">
+    <Dialog>
+      <DialogTrigger asChild>
+               <button className="hover:cursor-pointer group relative dark:bg-neutral-800 bg-neutral-200 p-px overflow-hidden rounded-xl">
               {/* 🌟 Fancy background */}
               <span className="absolute inset-0 overflow-hidden">
                 <span className="inset-0 absolute pointer-events-none select-none">
@@ -197,29 +141,18 @@ const CustomButton = () => {
                 </span>
               </span>
             </button>
-          </DialogTrigger>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>Use AI assistance</p>
-        </TooltipContent>
-      </Tooltip>
+      </DialogTrigger>
 
-      <DialogContent className="w-full max-w-2xl min-h-[520px] outline-0">
+      <DialogContent className="w-full max-w-2xl outline-0 min-h-[550px] p-6 rounded-2xl shadow-2xl bg-white dark:bg-neutral-900">
         <DialogHeader>
           <DialogTitle className="text-2xl flex items-center gap-3">
-            <Image
-              className="w-8 h-8 rounded-full object-cover"
-              src="/icons/ai.jpeg"
-              alt="AI Assistant"
-              width={100}
-              height={100}
-            />
+            <Image src={AI_AVATAR} alt="AI" width={40} height={40} className="rounded-full" />
             Chat with NoteBuddy
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col gap-4 h-[400px] sm:h-[480px]">
-          <div className="flex-1 overflow-y-auto bg-neutral-50 dark:bg-neutral-900 rounded-xl p-4 border border-neutral-200 dark:border-neutral-800 space-y-4">
+        <div className="flex flex-col h-[450px] mt-6 gap-4">
+          <div className="flex-1 overflow-y-auto flex flex-col gap-7 px-2">
             <AnimatePresence>
               {messages.map((msg, idx) => (
                 <motion.div
@@ -227,89 +160,60 @@ const CustomButton = () => {
                   initial={{ opacity: 0, y: msg.from === "user" ? 20 : -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                  className={`flex items-start gap-3 ${
-                    msg.from === "user" ? "flex-row-reverse" : ""
-                  }`}
+                  transition={{ duration: 0.3 }}
+                  className={`flex items-start gap-3 ${msg.from === "user" ? "flex-row-reverse" : ""}`}
                 >
-                  <Image
-                    src={msg.avatar}
-                    alt={msg.name}
-                    className="w-10 h-10 rounded-full object-cover"
-                    loading="lazy"
-                    width={100}
-                    height={100}
-                  />
-                  <div className="flex flex-col gap-0.5 max-w-[70%]">
-                    <span
-                      className={`font-semibold text-xs ${
-                        msg.from === "user" ? "text-right" : "text-left"
-                      }`}
-                    >
-                      {msg.name}
-                    </span>
-
-                    {msg.from === "ai" ? (
-                      <div className="flex flex-col items-start gap-1">
-                        <span className="block px-4 py-2 rounded-2xl text-sm whitespace-pre-line bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100">
-                          {msg.text}
-                        </span>
-                        <button
-                          onClick={() => copyToClipboard(msg.text)}
-                          className="text-xs text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 flex items-center gap-1"
-                        >
-                          <Copy size={14} /> Copy
-                        </button>
-                      </div>
-                    ) : (
-                      <span className="px-4 py-2 rounded-2xl text-sm whitespace-pre-line bg-primary text-white self-end">
+                  <Image src={msg.avatar} alt={msg.name} width={40} height={40} className="rounded-full object-cover" />
+                  <div className="flex flex-col gap-1 max-w-[70%]">
+                    <span className={`font-semibold text-sm ${msg.from === "user" ? "text-right" : ""}`}>{msg.name}</span>
+                    <div className="relative group">
+                      <span
+                        className={`block px-4 py-2 text-sm rounded-2xl break-words ${
+                          msg.from === "ai"
+                            ? "bg-gradient-to-tr from-gray-100 to-gray-200 dark:from-neutral-800 dark:to-neutral-700 text-neutral-900 dark:text-neutral-100"
+                            : "bg-primary text-white"
+                        }`}
+                      >
                         {msg.text}
                       </span>
-                    )}
+                      {msg.from === "ai" && (
+                        <button
+                          onClick={() => copyToClipboard(msg.text)}
+                          className="absolute -bottom-5 right-0 text-xs text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 flex items-center gap-1"
+                        >
+                          <Copy size={12} /> Copy
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               ))}
             </AnimatePresence>
 
             {loading && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex items-center gap-2"
-              >
-                <Image
-                  src="/icons/ai.jpeg"
-                  alt="NoteBuddy"
-                  className="w-10 h-10 rounded-full object-cover"
-                  width={100}
-                  height={100}
-                />
-                <span className="italic text-neutral-400 animate-pulse">
-                  Thinking…
-                </span>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2">
+                <Image src={AI_AVATAR} alt="AI" width={40} height={40} className="rounded-full" />
+                <div className="flex gap-1">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75"></span>
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150"></span>
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-300"></span>
+                </div>
               </motion.div>
             )}
-
-            {/* auto scroll target */}
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mt-2">
             <Input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Type a message..."
-              className="flex-1 border rounded-xl px-4 py-3 text-base"
+              placeholder="Type your message..."
+              className="flex-1  px-4 py-4 border border-gray-300 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-purple-400"
               disabled={loading}
             />
-            <Button
-              size="lg"
-              onClick={handleSubmit}
-              disabled={loading || !title.trim()}
-              className="px-6 py-3 rounded-xl text-base"
-            >
+            <Button size="lg" onClick={handleSubmit} disabled={loading || !title.trim()} className="px-6 py-3   text-white ">
               Send
             </Button>
           </div>
