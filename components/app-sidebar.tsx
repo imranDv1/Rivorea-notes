@@ -27,7 +27,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { ClipboardCheck, Files, FileText } from "lucide-react"
+import { ClipboardCheck, Files, FileText, LayoutDashboard } from "lucide-react"
 import { Logo } from "./logo"
 import Link from "next/link"
 import { authClient } from "@/lib/auth-client"
@@ -35,6 +35,11 @@ import { authClient } from "@/lib/auth-client"
 const data = {
  
   navMain: [
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: LayoutDashboard,
+    },
     {
       title: "All Notes",
       url: "/dashboard/create",
@@ -46,7 +51,7 @@ const data = {
       icon: FileText,
     },
     {
-      title: "To-Do",
+      title: "Tasks",
       url: "#",
       icon: ClipboardCheck,
     },
