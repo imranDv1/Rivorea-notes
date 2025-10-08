@@ -50,6 +50,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { useDialog } from "@/context/CreateDialogContext";
 
 const formSchema = z.object({
   title: z.string().min(5),
@@ -123,7 +124,7 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
-
+  const { isDialogOpen, openDialog, closeDialog } = useDialog();
   const maxTags = 3;
   const { data: session } = authClient.useSession();
   const userId = session?.user.id;
@@ -143,11 +144,11 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
         body: JSON.stringify(data),
       });
       toast.success("Note created successfully");
-      setIsOpen(false);
+      closeDialog();
       window.location.reload();
     } catch {
       toast.error("Failed to create note");
-      setIsOpen(false);
+      closeDialog();
     } finally {
       setLoading(false);
     }
@@ -255,8 +256,6 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
     fetchFavorites();
   }, [userId]);
 
-  const [isOpen, setIsOpen] = useState(false);
-
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [noteToEdit, setNoteToEdit] = useState<Note | null>(null);
   const [SearchVaolue, setSearch] = useState("");
@@ -308,7 +307,9 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
   const [searchResults, setSearchResults] = useState<Note[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  const [categorysearchResults, setcategorySearchResults] = useState<Note[]>([]);
+  const [categorysearchResults, setcategorySearchResults] = useState<Note[]>(
+    []
+  );
   const [hasCategorySearched, setHasCategorySearched] = useState(false);
 
   const handleBackToNotes = () => {
@@ -368,12 +369,14 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
 
   return (
     <div className="w-full flex flex-col gap-5">
-     
       {/* Create Note Button & Dialog */}
       <div className="w-full flex justify-between items-center">
         <h1 className="text-3xl font-bold">Notebooks</h1>
 
-        <form onSubmit={handleSearch} className=" hidden lg:flex w-7/12  items-center ">
+        <form
+          onSubmit={handleSearch}
+          className=" hidden lg:flex w-7/12  items-center "
+        >
           <InputGroup className="w-full">
             <InputGroupInput
               placeholder="Search..."
@@ -384,15 +387,12 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
               <Search />
             </InputGroupAddon>
           </InputGroup>
-     
         </form>
+           
+        <Button onClick={openDialog}> <FilePlus2 /> Create Note</Button>
 
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger
-            className={cn("flex items-center gap-2", buttonVariants())}
-          >
-            <FilePlus2 /> Create Note
-          </DialogTrigger>
+        <Dialog open={isDialogOpen} onOpenChange={closeDialog}>
+       
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Create Notebook</DialogTitle>
@@ -486,24 +486,24 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
             </Form>
           </DialogContent>
         </Dialog>
-        
       </div>
 
       {/* mobile search bar*/}
-        <form onSubmit={handleSearch} className="flex lg:hidden w-full items-center ">
-          <InputGroup className="w-full">
-            <InputGroupInput
-              placeholder="Search..."
-              value={SearchVaolue}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <InputGroupAddon>
-              <Search />
-            </InputGroupAddon>
-          </InputGroup>
-     
-        </form> 
-        
+      <form
+        onSubmit={handleSearch}
+        className="flex lg:hidden w-full items-center "
+      >
+        <InputGroup className="w-full">
+          <InputGroupInput
+            placeholder="Search..."
+            value={SearchVaolue}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <InputGroupAddon>
+            <Search />
+          </InputGroupAddon>
+        </InputGroup>
+      </form>
 
       {/* Notes List */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 h-max">
@@ -522,11 +522,13 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
         )}
 
         {/* Search Results */}
-        {!isSearching && hasSearched && (
-          searchResults.length > 0 ? (
+        {!isSearching &&
+          hasSearched &&
+          (searchResults.length > 0 ? (
             <>
               <h2 className="col-span-full text-xl font-semibold">
-                Results for: <span className="text-primary">&quot;{SearchVaolue}&quot;</span>
+                Results for:{" "}
+                <span className="text-primary">&quot;{SearchVaolue}&quot;</span>
               </h2>
               {searchResults.map((note) => (
                 <Card key={note.id}>
@@ -547,7 +549,9 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
                               <Star
                                 className="size-4"
                                 fill={favoriteStatus[note.id] ? "gold" : "none"}
-                                color={favoriteStatus[note.id] ? "gold" : "gray"}
+                                color={
+                                  favoriteStatus[note.id] ? "gold" : "gray"
+                                }
                               />
                             )}
                           </Button>
@@ -618,12 +622,12 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
             <p className="col-span-full text-center text-gray-400">
               No results found for &quot;{SearchVaolue}&quot;
             </p>
-          )
-        )}
+          ))}
 
         {/* Category Search Results */}
-        {!isSearching && hasCategorySearched && (
-          categorysearchResults.length > 0 ? (
+        {!isSearching &&
+          hasCategorySearched &&
+          (categorysearchResults.length > 0 ? (
             <>
               <h2 className="col-span-full text-xl font-semibold">
                 Category results:
@@ -719,11 +723,12 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
             <p className="col-span-full text-center text-gray-400">
               No results found for this category.
             </p>
-          )
-        )}
+          ))}
 
         {/* Default notes list */}
-        {!isSearching && !hasSearched && !hasCategorySearched &&
+        {!isSearching &&
+          !hasSearched &&
+          !hasCategorySearched &&
           notes.map((note) => (
             <Card key={note.id}>
               <CardHeader>

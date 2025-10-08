@@ -4,6 +4,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 import { ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
+import { DialogProvider } from "@/context/CreateDialogContext";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
@@ -19,7 +20,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <SidebarInset>
         <SiteHeader />
         <div className="w-full p-4">
-          {children}
+          <DialogProvider>
+             {children}
+          </DialogProvider>
+         
           <Toaster
             richColors // enables success=green, error=red, warning=yellow, info=blue
             closeButton // adds a close button on each toast

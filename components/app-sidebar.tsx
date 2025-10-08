@@ -45,14 +45,10 @@ const data = {
       url: "/dashboard/create",
       icon: Files,
     },
-    {
-      title: "PDF Summarizer",
-      url: "#",
-      icon: FileText,
-    },
+
     {
       title: "Tasks",
-      url: "#",
+      url: "/dashaboard/tasks",
       icon: ClipboardCheck,
     },
     {

@@ -58,7 +58,7 @@ export function NavMain({
                   tooltip={item.title}
                   asChild
                   className={`flex items-center gap-2 duration-200 ${
-                    isActive ? "bg-background text-primary-foreground" : "hover:bg-muted/50"
+                    isActive ? " text-primary" : "hover:bg-muted/50 text-muted-foreground"
                   }`}
                 >
                   <Link href={item.url} className="flex items-center gap-3">
