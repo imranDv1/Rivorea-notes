@@ -15,6 +15,13 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      // Add Cloudinary
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        port: "",
+        pathname: "/**", // allow all paths
+      },
     ],
   },
 };

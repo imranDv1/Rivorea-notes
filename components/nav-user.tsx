@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   IconCreditCard,
@@ -6,13 +6,9 @@ import {
   IconLogout,
   IconNotification,
   IconUserCircle,
-} from "@tabler/icons-react"
+} from "@tabler/icons-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,43 +17,44 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { authClient } from "@/lib/auth-client"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+} from "@/components/ui/sidebar";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import Link from "next/link";
 
 export function NavUser({
   user,
 }: {
   user: {
-    name: string
-    email: string
-    avatar: string
-  }
+    name: string;
+    email: string;
+    avatar: string;
+  };
 }) {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
 
-  const router = useRouter()
-    async function SignOut() {
-      await authClient.signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            window.location.reload()
-            router.push("/"); 
-            toast.success("Signout Successfuly");
-          },
-          onError: () => {
-            toast.error("Faild to SignOut");
-          },
+  const router = useRouter();
+  async function SignOut() {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          window.location.reload();
+          router.push("/");
+          toast.success("Signout Successfuly");
         },
-      });
-    }
+        onError: () => {
+          toast.error("Faild to SignOut");
+        },
+      },
+    });
+  }
 
   return (
     <SidebarMenu>
@@ -103,9 +100,11 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconUserCircle />
-                Account
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/profile">
+                  <IconUserCircle />
+                  Account
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <IconCreditCard />
@@ -125,5 +124,5 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

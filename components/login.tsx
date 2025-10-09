@@ -38,13 +38,30 @@ export default function LoginPage() {
   const [Loading, setLoading] = useState(false);
   const [googlePending, startGoogleTransiton] = useTransition();
 
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true)
-
+      await authClient.signIn.email(
+      {
+        email: values.email, // user email address
+        password: values.password, // user password -> min 8 characters by default
+        callbackURL: "/dashboard", // A URL to redirect to after the user verifies their email (optional)
+      },
+      {
+        onRequest: (ctx) => {
+          setLoading(true);
+        },
+        onSuccess: () => {
+          toast.success("Sign up sucess fully ");
+          setLoading(false);
+        },
+        onError: (ctx) => {
+          toast.error(ctx.error.message);
+          setLoading(false);
+        },
+      }
+    );
   }
 
- async function SignInWithGoogle() {
+  async function SignInWithGoogle() {
     startGoogleTransiton(async () => {
       await authClient.signIn.social({
         provider: "google",
@@ -60,7 +77,6 @@ export default function LoginPage() {
       });
     });
   }
-
 
   return (
     <section className="flex  w-full bg-zinc-50 px-4 py-16 md:py-32 dark:bg-transparent">
@@ -80,40 +96,45 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-6">
-            <Button type="button" variant="outline" className="w-full" onClick={SignInWithGoogle}>
-             {googlePending ? (
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={SignInWithGoogle}
+            >
+              {googlePending ? (
                 <>
-                <Loader2 className="size-4 animate-spin" />
-                <span>Loading....</span>
+                  <Loader2 className="size-4 animate-spin" />
+                  <span>Loading....</span>
                 </>
-             ): (
+              ) : (
                 <>
                   <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="0.98em"
-                height="1em"
-                viewBox="0 0 256 262"
-              >
-                <path
-                  fill="#4285f4"
-                  d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622l38.755 30.023l2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
-                ></path>
-                <path
-                  fill="#34a853"
-                  d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055c-34.523 0-63.824-22.773-74.269-54.25l-1.531.13l-40.298 31.187l-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
-                ></path>
-                <path
-                  fill="#fbbc05"
-                  d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82c0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602z"
-                ></path>
-                <path
-                  fill="#eb4335"
-                  d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0C79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
-                ></path>
-              </svg>
-              <span>Google</span>
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="0.98em"
+                    height="1em"
+                    viewBox="0 0 256 262"
+                  >
+                    <path
+                      fill="#4285f4"
+                      d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622l38.755 30.023l2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
+                    ></path>
+                    <path
+                      fill="#34a853"
+                      d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055c-34.523 0-63.824-22.773-74.269-54.25l-1.531.13l-40.298 31.187l-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
+                    ></path>
+                    <path
+                      fill="#fbbc05"
+                      d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82c0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602z"
+                    ></path>
+                    <path
+                      fill="#eb4335"
+                      d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0C79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
+                    ></path>
+                  </svg>
+                  <span>Google</span>
                 </>
-             )}
+              )}
             </Button>
           </div>
 
@@ -156,7 +177,11 @@ export default function LoginPage() {
                         <Link href="/">Forget your password</Link>
                       </div>
                       <FormControl>
-                        <Input type="password" placeholder="Enter your password" {...field} />
+                        <Input
+                          type="password"
+                          placeholder="Enter your password"
+                          {...field}
+                        />
                       </FormControl>
 
                       <FormMessage />
@@ -164,10 +189,14 @@ export default function LoginPage() {
                   )}
                 />
                 <Button type="submit" className="w-full" disabled={Loading}>
-                    {Loading? (<>
-                    <Loader2 className="size-4 animate-spin" />
-                    <span>Loading...</span>
-                    </>): "Continue"}
+                  {Loading ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      <span>Loading...</span>
+                    </>
+                  ) : (
+                    "Continue"
+                  )}
                 </Button>
               </form>
             </Form>

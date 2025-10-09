@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   IconCamera,
   IconDatabase,
@@ -12,12 +12,12 @@ import {
   IconReport,
   IconSearch,
   IconSettings,
-} from "@tabler/icons-react"
+} from "@tabler/icons-react";
 
-import { NavDocuments } from "@/components/nav-documents"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavDocuments } from "@/components/nav-documents";
+import { NavMain } from "@/components/nav-main";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -26,14 +26,14 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { ClipboardCheck, Files, FileText, LayoutDashboard } from "lucide-react"
-import { Logo } from "./logo"
-import Link from "next/link"
-import { authClient } from "@/lib/auth-client"
+} from "@/components/ui/sidebar";
+import { ClipboardCheck, Files, FileText, LayoutDashboard } from "lucide-react";
+import { Logo } from "./logo";
+import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
+import { useNotificationStore } from "@/context/notificationStore";
 
 const data = {
- 
   navMain: [
     {
       title: "Dashboard",
@@ -56,7 +56,6 @@ const data = {
       url: "#",
       icon: IconFolder,
     },
-   
   ],
   navClouds: [
     {
@@ -140,17 +139,39 @@ const data = {
       icon: IconFileWord,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+ const refreshSignal = useNotificationStore((state) => state.refreshSignal);
+  const { data: session } = authClient.useSession();
+  const [userData, setUserData] = React.useState({
+    name: session?.user.name || "",
+    email: session?.user.email || "",
+    avatar: session?.user.image || "/images/userefult.jpeg",
+  });
 
-  const {data:session } = authClient.useSession()
+  React.useEffect(() => {
+    const fetchUserData = async () => {
+      if (!session?.user.id) return;
 
-  const userData = {
-    name: session?.user.name as string,
-    email: session?.user.email as string,
-    avatar: session?.user.image as string
-  }
+      try {
+        const res = await fetch(`/api/user/profile?userId=${session.user.id}`);
+        const data = await res.json();
+        if (data.success) {
+          setUserData({
+            name: data.user.name,
+            email: data.user.email,
+            avatar: data.user.image || "/images/userefult.jpeg",
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch user data", err);
+      }
+    };
+
+    fetchUserData();
+  }, [refreshSignal, session?.user.id]);
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -160,8 +181,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <Link href='/' className="flex item-center justify-start">
-                <Logo/>
+              <Link href="/" className="flex item-center justify-start">
+                <Logo />
                 <span className="text-base font-semibold">Rivorea</span>
               </Link>
             </SidebarMenuButton>
@@ -170,12 +191,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments userId={session?.user.id as string} items={data.documents} />
+        <NavDocuments
+          userId={session?.user.id as string}
+          items={data.documents}
+        />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={userData} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
