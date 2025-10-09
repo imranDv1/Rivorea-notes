@@ -161,7 +161,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           setUserData({
             name: data.user.name,
             email: data.user.email,
-            avatar: data.user.image || "/images/userefult.jpeg",
+            avatar: data.user.image || "/Images/userefult.jpeg",
           });
         }
       } catch (err) {
