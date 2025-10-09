@@ -90,8 +90,8 @@ const ProfilePage = () => {
       const data = await res.json();
       if (data.success) {
         toast.success("Profile updated successfully!");
-        setEdit(true)
-         triggerRefresh();
+        setEdit(true);
+        triggerRefresh();
         setSaveLoaing(false);
       } else {
         toast.error("Error: " + (data.message || data.error));
@@ -159,12 +159,12 @@ const ProfilePage = () => {
                 alt="Profile Image"
                 width={128}
                 height={128}
-                className="object-cover border-2"
+                className="object-cover border-2 w-[200px]  max-h-[129px] min-h-[129px] "
               />
               {!edit && (
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg, image/jpg"
                   onChange={handleImageChange}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
