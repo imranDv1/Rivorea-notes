@@ -14,6 +14,7 @@ export async function POST(request: Request) {
 
   const hasSubs = subs.length > 0;
   const MAX_CHARS = hasSubs ? 5000 : 1000;
+  const limit = hasSubs ? 10 : 3;
 
-  return NextResponse.json({ MAX_CHARS });
+  return NextResponse.json({ MAX_CHARS ,limit });
 }

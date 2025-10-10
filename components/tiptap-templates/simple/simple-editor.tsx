@@ -194,9 +194,10 @@ type EditorProps = {
   content?: JsonValue;
   editable?: boolean;
   MAX_CHARS: number;
+  limit: number;
 };
 
-export function SimpleEditor({ noteId, content, MAX_CHARS }: EditorProps) {
+export function SimpleEditor({ noteId, content, MAX_CHARS , limit }: EditorProps) {
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
@@ -248,7 +249,7 @@ export function SimpleEditor({ noteId, content, MAX_CHARS }: EditorProps) {
       ImageUploadNode.configure({
         accept: "image/*",
         maxSize: MAX_FILE_SIZE,
-        limit: 3,
+        limit: limit,
         upload: async (file: File) => {
           const { previewUrl, file: originalFile } = await handleImageUpload(
             file
@@ -331,9 +332,7 @@ export function SimpleEditor({ noteId, content, MAX_CHARS }: EditorProps) {
       );
       return;
     }
-      if (uploadedFiles.length >= 3) {
-      return toast.error("you can upload only 3 images");
-    }
+    
 
     const contentJSON = JSON.stringify(editor.getJSON());
     setLoading(true);

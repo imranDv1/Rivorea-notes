@@ -13,6 +13,7 @@ const Page = (props: { params: Promise<tParams> }) => {
   const [notebody, setNotes] = useState<any | null>(null)
   const [isFetched, setIsFetched] = useState(false)
   const [MAX_CHARS, setMaxChars] = useState<number>(1000) // default limit
+  const [limit, setMaxlimit] = useState<number>(3) // default limit
 
   const { data: session } = authClient.useSession()
   const userId = session?.user?.id
@@ -45,9 +46,12 @@ const Page = (props: { params: Promise<tParams> }) => {
 
         const data = await res.json()
         setMaxChars(data.MAX_CHARS || 1000)
+        setMaxlimit(data.limit || 3)
       } catch (err) {
         console.error(err)
         setMaxChars(1000) // fallback if error
+        setMaxlimit(3)
+
       }
     }
 
@@ -94,7 +98,8 @@ const Page = (props: { params: Promise<tParams> }) => {
           noteId={params.id}
           content={isThereContent ? notebody.content : undefined}
           editable={false}
-          MAX_CHARS={MAX_CHARS} // ✅ Now dynamic based on subscription
+          MAX_CHARS={MAX_CHARS} 
+          limit={limit}// ✅ Now dynamic based on subscription
         />
       </div>
     </div>
