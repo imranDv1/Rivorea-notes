@@ -32,7 +32,7 @@ const Page = (props: { params: Promise<tParams> }) => {
   // Fetch MAX_CHARS based on user subscription
   useEffect(() => {
     if (!userId) return
-
+ 
     const fetchMaxChars = async () => {
       try {
         const res = await fetch('/api/getSubs', {

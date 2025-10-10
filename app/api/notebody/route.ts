@@ -18,7 +18,13 @@ export async function POST(request:Request) {
     }
   })
 
-  if(!notes) return null
+  if (!notes) {
+  return NextResponse.json(
+    { success: false, message: "Note not found" },
+    { status: 404 }
+  );
+}
+
 
   const notebody = await prisma.noteBody.findUnique({
     where : {
