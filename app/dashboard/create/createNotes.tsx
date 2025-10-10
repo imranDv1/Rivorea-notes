@@ -51,6 +51,8 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { useDialog } from "@/context/CreateDialogContext";
+import { useNoteNotificationStore } from "@/context/notesUpateStore";
+import { useFavNotificationStore } from "@/context/updateFavorite";
 
 const formSchema = z.object({
   title: z.string().min(5),
@@ -134,6 +136,13 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
     defaultValues: { title: "", description: "", category: [] },
   });
 
+  const triggerRefresh = useNoteNotificationStore(
+    (state) => state.triggerRefresh
+  );
+    const triggerFavRefresh = useFavNotificationStore(
+    (state) => state.triggerFavRefresh
+  );
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     const data = { ...values, userId };
@@ -145,7 +154,7 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
       });
       toast.success("Note created successfully");
       closeDialog();
-      window.location.reload();
+      triggerRefresh();
     } catch {
       toast.error("Failed to create note");
       closeDialog();
@@ -189,7 +198,7 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
       });
       if (!res.ok) throw new Error("Failed to delete note");
       toast.success("Note deleted successfully");
-      window.location.reload();
+      triggerRefresh();
     } catch (err) {
       toast.error((err as Error).message);
     } finally {
@@ -226,6 +235,7 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
       toast.success(
         isFavorite ? "Removed from favorites!" : "Added to favorites!"
       );
+      triggerFavRefresh()
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -296,7 +306,7 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
 
       toast.success("Note updated successfully");
       setEditDialogOpen(false);
-      window.location.reload();
+      triggerRefresh();
     } catch (err) {
       toast.error((err as Error).message);
     } finally {
@@ -388,11 +398,13 @@ const CreateNotes = ({ notes }: CreateNotesProps) => {
             </InputGroupAddon>
           </InputGroup>
         </form>
-           
-        <Button onClick={openDialog}> <FilePlus2 /> Create Note</Button>
+
+        <Button onClick={openDialog}>
+          {" "}
+          <FilePlus2 /> Create Note
+        </Button>
 
         <Dialog open={isDialogOpen} onOpenChange={closeDialog}>
-       
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Create Notebook</DialogTitle>

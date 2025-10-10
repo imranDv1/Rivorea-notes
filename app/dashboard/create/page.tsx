@@ -1,27 +1,48 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import CreateNotes from "./createNotes";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { prisma } from "@/lib/db";
+import { authClient } from "@/lib/auth-client";
+import { useNoteNotificationStore } from "@/context/notesUpateStore";
+import NotesLoadingSkeleton from "./_components/NotesLoadingSkeleton ";
 
-const Page = async () => {
-  // get user session from server side
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+const Page = () => {
+  const { data: session } = authClient.useSession();
+  const userId = session?.user?.id;
 
-  const userId = session?.user?.id; // depends on your auth structure
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [notes, setNotes] = useState<any[]>([]); // حالة لحفظ الملاحظات
+  const [loading, setLoading] = useState(true);
 
-  const notes = await prisma.note.findMany({
-    where: {
-      userId: userId,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+ const refreshSignal = useNoteNotificationStore((state) => state.refreshNoteSignal);
 
-  return <CreateNotes  notes={notes}/>;
+  useEffect(() => {
+    if (!userId) return; // لو مفيش user بعد ما يدخل
+
+    const fetchNotes = async () => {
+      try {
+        const res = await fetch("/api/notes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }), // <-- صح
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch notes");
+
+        const data = await res.json();
+        setNotes(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotes();
+  }, [userId,refreshSignal]);
+
+  if (loading) return <NotesLoadingSkeleton/>
+
+  return <CreateNotes notes={notes} />;
 };
 
 export default Page;

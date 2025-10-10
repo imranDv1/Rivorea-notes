@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import * as React from "react";
@@ -81,6 +82,7 @@ import { toast } from "sonner";
 import { JsonValue } from "@/lib/generated/prisma/runtime/library";
 import Link from "next/link";
 import CustomButton from "@/components/CustomButton";
+import { useEditorNotificationStore } from "@/context/simpleEditorupddate";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -190,16 +192,19 @@ type EditorProps = {
   noteId: string;
   content?: JsonValue;
   editable?: boolean;
+  MAX_CHARS:number
 };
 
-export function SimpleEditor({ noteId, content }: EditorProps) {
+export function SimpleEditor({ noteId, content , MAX_CHARS }: EditorProps) {
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
     "main" | "highlighter" | "link"
   >("main");
   const toolbarRef = React.useRef<HTMLDivElement>(null);
-
+  const triggerEditorRefresh = useEditorNotificationStore(
+    (state) => state.triggerEditorRefresh
+  );
   const [uploadedFiles, setUploadedFiles] = React.useState<File[]>([]);
   const [edit, setEdit] = React.useState(
     !content ||
@@ -263,6 +268,26 @@ export function SimpleEditor({ noteId, content }: EditorProps) {
     ],
   });
 
+
+  const [charCount, setCharCount] = React.useState(0);
+  React.useEffect(() => {
+    if (!editor) return;
+
+    const checkMaxContent = ({ transaction }: any) => {
+      const textLength = editor.getText().length;
+      if (textLength > MAX_CHARS) {
+        transaction.deleteRange({ from: MAX_CHARS, to: textLength });
+        toast.error(`Maximum content length is ${MAX_CHARS} characters!`);
+      }
+    };
+
+    editor.on("transaction", checkMaxContent);
+
+    return () => {
+      editor.off("transaction", checkMaxContent);
+    };
+  }, [editor]);
+
   // 🔑 Sync editor editable with `edit`
   React.useEffect(() => {
     if (editor) {
@@ -276,6 +301,22 @@ export function SimpleEditor({ noteId, content }: EditorProps) {
   });
 
   React.useEffect(() => {
+    if (!editor) return;
+
+    const updateCharCount = () => {
+      setCharCount(editor.getText().length);
+    };
+
+    editor.on("transaction", updateCharCount);
+    // initialize count
+    updateCharCount();
+
+    return () => {
+      editor.off("transaction", updateCharCount);
+    };
+  }, [editor]);
+
+  React.useEffect(() => {
     if (!isMobile && mobileView !== "main") setMobileView("main");
   }, [isMobile, mobileView]);
 
@@ -283,6 +324,13 @@ export function SimpleEditor({ noteId, content }: EditorProps) {
 
   const handleSave = async () => {
     if (!editor) return;
+    const contentLength = editor.getText().length;
+    if (contentLength > MAX_CHARS) {
+      toast.error(
+        `Cannot save! Maximum allowed content is ${MAX_CHARS} characters.`
+      );
+      return;
+    }
     const contentJSON = JSON.stringify(editor.getJSON());
     setLoading(true);
     const formData = new FormData();
@@ -302,7 +350,7 @@ export function SimpleEditor({ noteId, content }: EditorProps) {
       toast.success("Note saved successfully!");
       setLoading(false);
 
-      window.location.reload();
+      triggerEditorRefresh();
     } else {
       toast.error("Error: " + data.error);
       setLoading(false);
@@ -323,14 +371,28 @@ export function SimpleEditor({ noteId, content }: EditorProps) {
             <ShadcnButton variant="outline" onClick={() => setEdit(!edit)}>
               {edit ? "Close Edit" : "Edit"}
             </ShadcnButton>
-
-       
           </div>
-        ) : null}
+        ) : (
+          <>
+            <Link
+              className={buttonVariants({ variant: "outline" })}
+              href="/dashboard/create"
+            >
+              <CornerDownLeft />
+            </Link>
+          </>
+        )}
 
         {edit ? (
-          <div className="flex items-center gap-2 ت">
-                 <CustomButton  />
+          <div className="flex items-center gap-4 ">
+            <span
+              className={`text-sm ${
+                charCount > MAX_CHARS ? "text-red-500" : "text-green-600"
+              }`}
+            >
+              {charCount}/{MAX_CHARS}
+            </span>
+            <CustomButton />
 
             <ShadcnButton disabled={SaveLoading} size="sm" onClick={handleSave}>
               {SaveLoading ? (
