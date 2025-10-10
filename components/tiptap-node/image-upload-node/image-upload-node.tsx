@@ -7,75 +7,27 @@ import { Button } from "@/components/tiptap-ui-primitive/button"
 import { CloseIcon } from "@/components/tiptap-icons/close-icon"
 import "@/components/tiptap-node/image-upload-node/image-upload-node.scss"
 import { focusNextNode, isValidPosition } from "@/lib/tiptap-utils"
+import { toast } from "sonner" // <-- make sure you have 'sonner' installed
 
 export interface FileItem {
-  /**
-   * Unique identifier for the file item
-   */
   id: string
-  /**
-   * The actual File object being uploaded
-   */
   file: File
-  /**
-   * Current upload progress as a percentage (0-100)
-   */
   progress: number
-  /**
-   * Current status of the file upload process
-   * @default "uploading"
-   */
   status: "uploading" | "success" | "error"
-
-  /**
-   * URL to the uploaded file, available after successful upload
-   * @optional
-   */
   url?: string
-  /**
-   * Controller that can be used to abort the upload process
-   * @optional
-   */
   abortController?: AbortController
 }
 
 export interface UploadOptions {
-  /**
-   * Maximum allowed file size in bytes
-   */
   maxSize: number
-  /**
-   * Maximum number of files that can be uploaded
-   */
   limit: number
-  /**
-   * String specifying acceptable file types (MIME types or extensions)
-   * @example ".jpg,.png,image/jpeg" or "image/*"
-   */
   accept: string
-  /**
-   * Function that handles the actual file upload process
-   * @param {File} file - The file to be uploaded
-   * @param {Function} onProgress - Callback function to report upload progress
-   * @param {AbortSignal} signal - Signal that can be used to abort the upload
-   * @returns {Promise<string>} Promise resolving to the URL of the uploaded file
-   */
   upload: (
     file: File,
     onProgress: (event: { progress: number }) => void,
     signal: AbortSignal
   ) => Promise<string>
-  /**
-   * Callback triggered when a file is uploaded successfully
-   * @param {string} url - URL of the successfully uploaded file
-   * @optional
-   */
   onSuccess?: (url: string) => void
-  /**
-   * Callback triggered when an error occurs during upload
-   * @param {Error} error - The error that occurred
-   * @optional
-   */
   onError?: (error: Error) => void
 }
 
@@ -91,6 +43,7 @@ function useFileUpload(options: UploadOptions) {
         `File size exceeds maximum allowed (${options.maxSize / 1024 / 1024}MB)`
       )
       options.onError?.(error)
+      toast.error(error.message)
       return null
     }
 
@@ -148,9 +101,9 @@ function useFileUpload(options: UploadOptions) {
               : item
           )
         )
-        options.onError?.(
-          error instanceof Error ? error : new Error("Upload failed")
-        )
+        const err = error instanceof Error ? error : new Error("Upload failed")
+        options.onError?.(err)
+        toast.error(err.message)
       }
       return null
     }
@@ -158,16 +111,18 @@ function useFileUpload(options: UploadOptions) {
 
   const uploadFiles = async (files: File[]): Promise<string[]> => {
     if (!files || files.length === 0) {
-      options.onError?.(new Error("No files to upload"))
+      const error = new Error("No files to upload")
+      options.onError?.(error)
+      toast.error(error.message)
       return []
     }
 
     if (options.limit && files.length > options.limit) {
-      options.onError?.(
-        new Error(
-          `Maximum ${options.limit} file${options.limit === 1 ? "" : "s"} allowed`
-        )
+      const error = new Error(
+        `Maximum ${options.limit} file${options.limit === 1 ? "" : "s"} allowed`
       )
+      options.onError?.(error)
+      toast.error(error.message)
       return []
     }
 
@@ -209,6 +164,7 @@ function useFileUpload(options: UploadOptions) {
     uploadFiles,
     removeFileItem,
     clearAllFiles,
+    setFileItems, // expose for manual control in main component
   }
 }
 
@@ -268,22 +224,10 @@ const FileCornerIcon: React.FC = () => (
 )
 
 interface ImageUploadDragAreaProps {
-  /**
-   * Callback function triggered when files are dropped or selected
-   * @param {File[]} files - Array of File objects that were dropped or selected
-   */
   onFile: (files: File[]) => void
-  /**
-   * Optional child elements to render inside the drag area
-   * @optional
-   * @default undefined
-   */
   children?: React.ReactNode
 }
 
-/**
- * A component that creates a drag-and-drop area for image uploads
- */
 const ImageUploadDragArea: React.FC<ImageUploadDragAreaProps> = ({
   onFile,
   children,
@@ -338,19 +282,10 @@ const ImageUploadDragArea: React.FC<ImageUploadDragAreaProps> = ({
 }
 
 interface ImageUploadPreviewProps {
-  /**
-   * The file item to preview
-   */
   fileItem: FileItem
-  /**
-   * Callback to remove this file from upload queue
-   */
   onRemove: () => void
 }
 
-/**
- * Component that displays a preview of an uploading file with progress
- */
 const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
   fileItem,
   onRemove,
@@ -447,10 +382,35 @@ export const ImageUploadNode: React.FC<NodeViewProps> = (props) => {
     onError: extension.options.onError,
   }
 
-  const { fileItems, uploadFiles, removeFileItem, clearAllFiles } =
+  const { fileItems, uploadFiles, removeFileItem, clearAllFiles, setFileItems } =
     useFileUpload(uploadOptions)
 
+  // Helper to count inserted images in editor
+  const getImageNodeCount = () => {
+    let count = 0
+    props.editor.state.doc.descendants((node) => {
+      if (node.type.name === extension.options.type) count++
+    })
+    return count
+  }
+
   const handleUpload = async (files: File[]) => {
+    // Limit for current node = 3, but also check already inserted images in editor!
+    const currentImageCount = getImageNodeCount()
+    const remaining = limit - currentImageCount
+
+    if (remaining <= 0) {
+      toast.error(`You can only upload up to ${limit} images.`)
+      return
+    }
+
+    if (files.length > remaining) {
+      toast.error(
+        `You can only upload ${remaining} more image${remaining === 1 ? "" : "s"}.`
+      )
+      files = files.slice(0, remaining)
+    }
+
     const urls = await uploadFiles(files)
 
     if (urls.length > 0) {
@@ -480,6 +440,8 @@ export const ImageUploadNode: React.FC<NodeViewProps> = (props) => {
 
         focusNextNode(props.editor)
       }
+      // Clear fileItems after successful upload
+      setFileItems([])
     }
   }
 
@@ -487,6 +449,7 @@ export const ImageUploadNode: React.FC<NodeViewProps> = (props) => {
     const files = e.target.files
     if (!files || files.length === 0) {
       extension.options.onError?.(new Error("No file selected"))
+      toast.error("No file selected")
       return
     }
     handleUpload(Array.from(files))
@@ -548,6 +511,7 @@ export const ImageUploadNode: React.FC<NodeViewProps> = (props) => {
         multiple={limit > 1}
         onChange={handleChange}
         onClick={(e: React.MouseEvent<HTMLInputElement>) => e.stopPropagation()}
+        style={{ display: "none" }}
       />
     </NodeViewWrapper>
   )

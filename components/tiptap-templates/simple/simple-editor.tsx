@@ -83,6 +83,7 @@ import { JsonValue } from "@/lib/generated/prisma/runtime/library";
 import Link from "next/link";
 import CustomButton from "@/components/CustomButton";
 import { useEditorNotificationStore } from "@/context/simpleEditorupddate";
+import { file } from "zod";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -192,10 +193,10 @@ type EditorProps = {
   noteId: string;
   content?: JsonValue;
   editable?: boolean;
-  MAX_CHARS:number
+  MAX_CHARS: number;
 };
 
-export function SimpleEditor({ noteId, content , MAX_CHARS }: EditorProps) {
+export function SimpleEditor({ noteId, content, MAX_CHARS }: EditorProps) {
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
@@ -268,7 +269,6 @@ export function SimpleEditor({ noteId, content , MAX_CHARS }: EditorProps) {
     ],
   });
 
-
   const [charCount, setCharCount] = React.useState(0);
   React.useEffect(() => {
     if (!editor) return;
@@ -331,12 +331,16 @@ export function SimpleEditor({ noteId, content , MAX_CHARS }: EditorProps) {
       );
       return;
     }
+      if (uploadedFiles.length >= 3) {
+      return toast.error("you can upload only 3 images");
+    }
+
     const contentJSON = JSON.stringify(editor.getJSON());
     setLoading(true);
     const formData = new FormData();
     formData.append("noteId", noteId);
     formData.append("content", contentJSON);
-
+  
     for (const file of uploadedFiles) {
       formData.append("images", file);
     }
