@@ -327,6 +327,7 @@
 
 * {
   scrollbar-width: none; /* hides scrollbar */
+  scroll-behavior: smooth;
 }
 
 

@@ -17,6 +17,9 @@ import {
   FileImage,
   LogOut,
   User,
+  User2,
+  UserCheck2,
+  UserCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -47,8 +50,8 @@ export function UserDropdown({ email, name, image,  }: iAppProps) {
     });
   }
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <DropdownMenu >
+      <DropdownMenuTrigger  asChild>
         <div className="flex items-center gap-2 cursor-pointer select-none">
           <Avatar>
             <AvatarImage src={`${image}`} alt="Profile image" />
@@ -58,7 +61,7 @@ export function UserDropdown({ email, name, image,  }: iAppProps) {
         </div>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent  align="end" className="w-48 bg-card">
         <DropdownMenuLabel className="flex flex-col gap-1">
           <span>{name}</span>
           <span className="text-muted-foreground text-sm">{email}</span>
@@ -66,24 +69,11 @@ export function UserDropdown({ email, name, image,  }: iAppProps) {
 
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/ui-kit">
-            <CircuitBoard className="mr-2 h-4 w-4" />
-            <span>Ui kit</span>
+          <Link href="/dashboard/profile">
+            <UserCircle className="mr-2 h-4 w-4" />
+            <span>Account</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/icons">
-            <FileImage className="mr-2 h-4 w-4" />
-            <span>Icons</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/purchase">
-            <User className="mr-2 h-4 w-4" />
-            <span>Purchase</span>
-          </Link>
-        </DropdownMenuItem>
-      
           <DropdownMenuItem asChild>
             <Link href="/dashboard">
               <User className="mr-2 h-4 w-4" />

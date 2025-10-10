@@ -11,10 +11,9 @@ import { UserDropdown } from './UserDropdown'
 import { ThemeToggle } from './ThemeToggle'
 
 const menuItems = [
-    { name: 'Features', href: '#link' },
-    { name: 'Solution', href: '#link' },
-    { name: 'Pricing', href: '#link' },
-    { name: 'About', href: '#link' },
+    { name: 'Features', href: '#features' },
+    { name: 'Solution', href: '#solution' },
+    { name: 'Pricing', href: '#pricing' },
 ]
 
 export const HeroHeader = () => {
@@ -104,7 +103,7 @@ export const HeroHeader = () => {
                                 <Button
                                     asChild
                                     size="sm">
-                                    <Link href="#">
+                                    <Link href="/signUp">
                                         <span>Sign Up</span>
                                     </Link>
                                 </Button>
