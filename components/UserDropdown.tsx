@@ -13,12 +13,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import {
   ChevronDownIcon,
-  CircuitBoard,
-  FileImage,
   LogOut,
   User,
-  User2,
-  UserCheck2,
   UserCircle,
 } from "lucide-react";
 import Link from "next/link";
