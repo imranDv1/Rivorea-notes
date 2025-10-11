@@ -76,28 +76,28 @@ export default function PricingClient({
               <span className="my-3 block text-2xl font-semibold">$0 / mo</span>
               <CardDescription className="text-sm">Per editor</CardDescription>
               <Button asChild variant="outline" className="mt-4 w-full">
-                <Link href="">Get Started</Link>
+                <Link href="/dashboard">Get Started</Link>
               </Button>
             </CardHeader>
             <CardContent className="space-y-4">
               <hr className="border-dashed" />
               <ul className="list-outside space-y-3 text-sm">
-                {[
-                  "Basic Analytics Dashboard",
-                  "5GB Cloud Storage",
-                  "Email and Chat Support",
-                ].map((item, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <Check className="size-3" />
-                    {item}
-                  </li>
-                ))}
+                {["Note taking", "Highliy customizeble note "].map(
+                  (item, index) => (
+                    <li key={index} className="flex items-center gap-2">
+                      <Check className="size-3" />
+                      {item}
+                    </li>
+                  )
+                )}
               </ul>
             </CardContent>
           </Card>
 
           {/* Pro Card */}
-          <Card className={cn("relative", hasSubscription ? 'border-primary' : '')}>
+          <Card
+            className={cn("relative", hasSubscription ? "border-primary" : "")}
+          >
             <span className="absolute inset-x-0 -top-3 mx-auto flex h-6 w-fit items-center rounded-full bg-gradient-to-br from-purple-400 to-amber-300 px-3 py-1 text-xs font-medium text-amber-950 ring-1 ring-inset ring-white/20 ring-offset-1 ring-offset-gray-950/5">
               Popular
             </span>
@@ -132,13 +132,8 @@ export default function PricingClient({
                 {[
                   "Everything in Free Plan",
                   "Ai note writer",
-                  "Email and Chat Support",
-                  "Access to Community Forum",
-                  "Single User Access",
-                  "Access to Basic Templates",
-                  "Mobile App Access",
-                  "1 Custom Report Per Month",
-                  "Monthly Product Updates",
+                  "More long note typing",
+                  "More uploading image per note",
                   "Standard Security Features",
                 ].map((item, index) => (
                   <li key={index} className="flex items-center gap-2">
