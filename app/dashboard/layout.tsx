@@ -19,11 +19,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
-        <div className="w-full p-4">
-          <DialogProvider>
-             {children}
-          </DialogProvider>
-         
+        <div className="w-full max-w-[77rem] mx-auto px-4">
+          <DialogProvider>{children}</DialogProvider>
+
           <Toaster
             richColors // enables success=green, error=red, warning=yellow, info=blue
             closeButton // adds a close button on each toast

@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
-import { useNotificationStore } from "@/context/notificationStore";
+import { useNotificationStore } from "@/context/profileUpdateNotification";
 const ProfilePage = () => {
   const { data: session } = authClient.useSession();
   const [edit, setEdit] = useState(true);

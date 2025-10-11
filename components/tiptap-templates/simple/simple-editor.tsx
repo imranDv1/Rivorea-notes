@@ -83,7 +83,6 @@ import { JsonValue } from "@/lib/generated/prisma/runtime/library";
 import Link from "next/link";
 import CustomButton from "@/components/CustomButton";
 import { useEditorNotificationStore } from "@/context/simpleEditorupddate";
-import { file } from "zod";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -267,7 +266,7 @@ export function SimpleEditor({
       DragHandle.configure({
         render: () => {
           const span = document.createElement("span");
-          span.className = "drag-handle";
+          span.className = "drag-handle hidden sm:inline-block";
           span.textContent = "⋮⋮";
           return span;
         },
@@ -365,33 +364,35 @@ export function SimpleEditor({
   };
 
   return (
-    <div className="w-[95%]">
-      <div className="w-full flex justify-end gap-4 items-center">
-        {content ? (
-          <div className="flex items-center gap-5">
-            <Link
-              className={buttonVariants({ variant: "outline" })}
-              href="/dashboard/create"
-            >
-              <CornerDownLeft />
-            </Link>
-            <ShadcnButton variant="outline" onClick={() => setEdit(!edit)}>
-              {edit ? "Close Edit" : "Edit"}
-            </ShadcnButton>
-          </div>
-        ) : (
-          <>
-            <Link
-              className={buttonVariants({ variant: "outline" })}
-              href="/dashboard/create"
-            >
-              <CornerDownLeft />
-            </Link>
-          </>
-        )}
+    <div className="w-full flex flex-col items-center">
+      <div className="w-full flex lg:flex-row flex-col justify-end gap-4 items-center">
+        <div className="w-full lg:w-max flex justify-end">
+          {content ? (
+            <div className="flex items-center gap-5">
+              <Link
+                className={buttonVariants({ variant: "outline" })}
+                href="/dashboard/create"
+              >
+                <CornerDownLeft />
+              </Link>
+              <ShadcnButton variant="outline" onClick={() => setEdit(!edit)}>
+                {edit ? "Close Edit" : "Edit"}
+              </ShadcnButton>
+            </div>
+          ) : (
+            <>
+              <Link
+                className={buttonVariants({ variant: "outline" })}
+                href="/dashboard/create"
+              >
+                <CornerDownLeft />
+              </Link>
+            </>
+          )}
+        </div>
 
         {edit ? (
-          <div className="flex items-center gap-4 ">
+          <div className="w-full flex items-center justify-end   gap-4 ">
             <span
               className={`text-sm ${
                 charCount > MAX_CHARS ? "text-red-500" : "text-primary"
@@ -399,6 +400,9 @@ export function SimpleEditor({
             >
               {charCount}/{MAX_CHARS}
             </span>
+
+            <span></span>
+            {/* the ai button open dialog 👇 */}
             {/* <CustomButton /> */}
 
             <button
@@ -520,7 +524,7 @@ export function SimpleEditor({
         <EditorContent
           editor={editor}
           role="presentation"
-          className="w-[99%] mt-2"
+          className="w-[100%] mt-2"
         />
       </EditorContext.Provider>
     </div>

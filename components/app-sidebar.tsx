@@ -31,7 +31,7 @@ import { ClipboardCheck, Files, FileText, LayoutDashboard } from "lucide-react";
 import { Logo } from "./logo";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
-import { useNotificationStore } from "@/context/notificationStore";
+import { useNotificationStore } from "@/context/profileUpdateNotification";
 
 const data = {
   navMain: [
@@ -142,7 +142,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
- const refreshSignal = useNotificationStore((state) => state.refreshSignal);
+  const refreshSignal = useNotificationStore((state) => state.refreshSignal);
   const { data: session } = authClient.useSession();
   const [userData, setUserData] = React.useState({
     name: session?.user.name || "",
