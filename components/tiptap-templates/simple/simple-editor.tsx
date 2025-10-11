@@ -94,6 +94,8 @@ const MainToolbarContent = ({
   isMobile: boolean;
   onSave: () => void;
 }) => {
+  const imageUploadRef = React.useRef<any>(null);
+
   return (
     <>
       <Spacer />
@@ -339,6 +341,7 @@ export function SimpleEditor({
 
     const contentJSON = JSON.stringify(editor.getJSON());
     setLoading(true);
+
     const formData = new FormData();
     formData.append("noteId", noteId);
     formData.append("content", contentJSON);

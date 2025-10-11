@@ -43,6 +43,19 @@ function replaceImageSrc(node: any, imagesUrls: string[], indexObj: { i: number 
   return node;
 }
 
+// Helper: remove nodes of type "imageUpload" from content
+function removeImageUploadNodes(node: any): any {
+  if (!node) return node;
+
+  if (Array.isArray(node.content)) {
+    node.content = node.content
+      .map(removeImageUploadNodes)
+      .filter((child: any) => child.type !== "imageUpload");
+  }
+
+  return node;
+}
+
 // Helper: extract Cloudinary public_id from secure_url
 function getPublicIdFromUrl(url: string) {
   const parts = url.split("/"); 
@@ -75,22 +88,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "Invalid content JSON" }, { status: 400 });
     }
 
-    // Check if content is effectively empty
-   const isEmptyContent =
-  content.type === "doc" &&
-  Array.isArray(content.content) &&
-  content.content.length === 1 &&
-  content.content[0].type === "paragraph" &&
-  (
-    !content.content[0].content || // ما فيه أي نص
-    content.content[0].content.every((c: any) =>
-      c.type === "text" && (!c.text || c.text.trim() === "")
-    )
-  );
+    // Remove any "imageUpload" nodes
+    content = removeImageUploadNodes(content);
 
-if (isEmptyContent) {
-  content = null;
-}
+    // Check if content is effectively empty
+    const isEmptyContent =
+      content.type === "doc" &&
+      Array.isArray(content.content) &&
+      content.content.length === 1 &&
+      content.content[0].type === "paragraph" &&
+      (
+        !content.content[0].content || 
+        content.content[0].content.every((c: any) =>
+          c.type === "text" && (!c.text || c.text.trim() === "")
+        )
+      );
+
+    if (isEmptyContent) {
+      content = null;
+    }
+
     // Extract external links
     const links = content ? extractLinksFromContent(content) : [];
 
@@ -158,4 +175,3 @@ if (isEmptyContent) {
     await prisma.$disconnect();
   }
 }
-
