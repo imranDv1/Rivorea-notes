@@ -37,36 +37,6 @@ export interface UploadOptions {
 function useFileUpload(options: UploadOptions) {
   const [fileItems, setFileItems] = React.useState<FileItem[]>([])
 
-  // Simulated local upload
-  const simulateUpload = async (
-    file: File,
-    onProgress: (event: { progress: number }) => void,
-    signal: AbortSignal
-  ): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      let progress = 0
-      const interval = setInterval(() => {
-        if (signal.aborted) {
-          clearInterval(interval)
-          reject(new Error("Upload canceled"))
-          return
-        }
-
-        progress += Math.random() * 10 // random speed
-        if (progress >= 100) {
-          progress = 100
-          onProgress({ progress })
-          clearInterval(interval)
-          // Simulate "success" with fake local URL
-          const fakeUrl = URL.createObjectURL(file)
-          resolve(fakeUrl)
-        } else {
-          onProgress({ progress })
-        }
-      }, 150)
-    })
-  }
-
   const uploadFile = async (file: File): Promise<string | null> => {
     if (file.size > options.maxSize) {
       const error = new Error(
@@ -91,10 +61,13 @@ function useFileUpload(options: UploadOptions) {
     setFileItems((prev) => [...prev, newFileItem])
 
     try {
-      // Simulated local upload instead of real API
-      const url = await simulateUpload(
+      if (!options.upload) {
+        throw new Error("Upload function is not defined")
+      }
+
+      const url = await options.upload(
         file,
-        (event) => {
+        (event: { progress: number }) => {
           setFileItems((prev) =>
             prev.map((item) =>
               item.id === fileId ? { ...item, progress: event.progress } : item
@@ -103,6 +76,8 @@ function useFileUpload(options: UploadOptions) {
         },
         abortController.signal
       )
+
+      if (!url) throw new Error("Upload failed: No URL returned")
 
       if (!abortController.signal.aborted) {
         setFileItems((prev) =>
@@ -136,34 +111,50 @@ function useFileUpload(options: UploadOptions) {
 
   const uploadFiles = async (files: File[]): Promise<string[]> => {
     if (!files || files.length === 0) {
-      toast.error("No files to upload")
+      const error = new Error("No files to upload")
+      options.onError?.(error)
+      toast.error(error.message)
       return []
     }
 
     if (options.limit && files.length > options.limit) {
-      toast.error(`Maximum ${options.limit} file(s) allowed`)
+      const error = new Error(
+        `Maximum ${options.limit} file${options.limit === 1 ? "" : "s"} allowed`
+      )
+      options.onError?.(error)
+      toast.error(error.message)
       return []
     }
 
+    // Upload all files concurrently
     const uploadPromises = files.map((file) => uploadFile(file))
     const results = await Promise.all(uploadPromises)
 
+    // Filter out null results (failed uploads)
     return results.filter((url): url is string => url !== null)
   }
 
   const removeFileItem = (fileId: string) => {
     setFileItems((prev) => {
       const fileToRemove = prev.find((item) => item.id === fileId)
-      if (fileToRemove?.abortController) fileToRemove.abortController.abort()
-      if (fileToRemove?.url) URL.revokeObjectURL(fileToRemove.url)
+      if (fileToRemove?.abortController) {
+        fileToRemove.abortController.abort()
+      }
+      if (fileToRemove?.url) {
+        URL.revokeObjectURL(fileToRemove.url)
+      }
       return prev.filter((item) => item.id !== fileId)
     })
   }
 
   const clearAllFiles = () => {
     fileItems.forEach((item) => {
-      if (item.abortController) item.abortController.abort()
-      if (item.url) URL.revokeObjectURL(item.url)
+      if (item.abortController) {
+        item.abortController.abort()
+      }
+      if (item.url) {
+        URL.revokeObjectURL(item.url)
+      }
     })
     setFileItems([])
   }
@@ -173,10 +164,9 @@ function useFileUpload(options: UploadOptions) {
     uploadFiles,
     removeFileItem,
     clearAllFiles,
-    setFileItems,
+    setFileItems, // expose for manual control in main component
   }
 }
-
 
 const CloudUploadIcon: React.FC = () => (
   <svg
@@ -334,7 +324,7 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
         <div className="tiptap-image-upload-actions">
           {fileItem.status === "uploading" && (
             <span className="tiptap-image-upload-progress-text">
-               {Math.floor(fileItem.progress)}%
+           uploading..
             </span>
           )}
           <Button
