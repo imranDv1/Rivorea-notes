@@ -364,7 +364,7 @@ export function SimpleEditor({
   };
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center mt-4 gap-4">
       <div className="w-full flex lg:flex-row flex-col justify-end gap-4 items-center">
         <div className="w-full lg:w-max flex justify-end">
           {content ? (
