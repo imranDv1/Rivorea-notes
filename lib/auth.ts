@@ -21,16 +21,8 @@ export const auth = betterAuth({
     },
     },
 
-      trustedOrigins: [
-        // Basic scheme
-        "rivorenotesapp://", 
-        
-        // Production & staging schemes
-        "rivorenotesapp-prod://",
-        "rivorenotesapp-staging://",
-        
-        // Wildcard support for all paths following the scheme
-        "rivorenotesapp://*"
-    ]
+    baseURL : process.env.NEXT_PUBLIC_APP_URL
+
+ 
      
 });
