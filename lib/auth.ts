@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./db";
 
+import { expo } from "@better-auth/expo";
 
 // If your Prisma file is located elsewhere, you can change the path
 
@@ -21,8 +22,8 @@ export const auth = betterAuth({
     },
     },
 
-    baseURL : process.env.NEXT_PUBLIC_APP_URL
-
+    baseURL : process.env.NEXT_PUBLIC_APP_URL,
+  plugins: [expo()],
  
      
 });
