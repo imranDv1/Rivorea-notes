@@ -25,43 +25,61 @@ function extractLinksFromContent(content: any): string[] {
   return Array.from(new Set(urls));
 }
 
-// Helper: replace image src in Tiptap content with Cloudinary URLs
-function replaceImageSrc(node: any, imagesUrls: string[], indexObj: { i: number }): any {
-  if (!node) return node;
-
-  if (node.type === "image") {
-    if (imagesUrls[indexObj.i]) {
-      node.attrs.src = imagesUrls[indexObj.i];
-      indexObj.i += 1;
+// Helper: extract all image srcs from Tiptap JSON
+function extractImageSrcsFromContent(content: any): string[] {
+  const srcs: string[] = [];
+  function traverse(node: any) {
+    if (!node) return;
+    if (node.type === "image" && node.attrs?.src) {
+      srcs.push(node.attrs.src);
+    }
+    if (Array.isArray(node.content)) {
+      node.content.forEach(traverse);
     }
   }
+  traverse(content);
+  return srcs;
+}
 
-  if (Array.isArray(node.content)) {
-    node.content = node.content.map((child: any) => replaceImageSrc(child, imagesUrls, indexObj));
+// Helper: replace image src in Tiptap content with Cloudinary URLs (in order)
+function replaceImageSrcs(node: any, newImageUrls: string[]): any {
+  let imageIndex = 0;
+  function traverse(n: any): any {
+    if (!n) return n;
+    if (n.type === "image") {
+      // Only replace if src starts with "blob:" (i.e. new upload)
+      if (n.attrs?.src && n.attrs.src.startsWith("blob:") && newImageUrls[imageIndex]) {
+        n.attrs.src = newImageUrls[imageIndex];
+        imageIndex += 1;
+      }
+    }
+    if (Array.isArray(n.content)) {
+      n.content = n.content.map(traverse);
+    }
+    return n;
   }
-
-  return node;
+  return traverse(node);
 }
 
 // Helper: remove nodes of type "imageUpload" from content
 function removeImageUploadNodes(node: any): any {
   if (!node) return node;
-
   if (Array.isArray(node.content)) {
     node.content = node.content
       .map(removeImageUploadNodes)
       .filter((child: any) => child.type !== "imageUpload");
   }
-
   return node;
 }
 
 // Helper: extract Cloudinary public_id from secure_url
 function getPublicIdFromUrl(url: string) {
-  const parts = url.split("/"); 
-  const folderAndFile = parts.slice(-2).join("/"); // e.g., notes/myimage.jpg
-  const publicId = folderAndFile.replace(/\.[^/.]+$/, ""); // remove extension
-  return publicId;
+  // works for images uploaded to a folder (e.g., notes/...)
+  const matches = url.match(/\/(?:v\d+\/)?([^/.]+(?:\/[^/.]+)*)\.[^/.]+$/); // matches "notes/abc123"
+  if (matches && matches[1]) {
+    return matches[1];
+  }
+  return null;
 }
 
 export async function POST(request: Request) {
@@ -111,9 +129,18 @@ export async function POST(request: Request) {
     // Extract external links
     const links = content ? extractLinksFromContent(content) : [];
 
-    // Upload new images to Cloudinary
-    const imagesUrls: string[] = [];
-    for (const file of files) {
+    // Extract all image srcs from new content (before replacement)
+    const allImageSrcs = content ? extractImageSrcsFromContent(content) : [];
+
+    // Find which images are new (blob:), and need to be uploaded
+    const blobIndexes = allImageSrcs
+      .map((src, idx) => src.startsWith("blob:") ? idx : -1)
+      .filter(idx => idx !== -1);
+
+    // Upload new images to Cloudinary and get their URLs
+    const newImageUrls: string[] = [];
+    for (let i = 0; i < blobIndexes.length; ++i) {
+      const file = files[i]; // Order of files must match order of blob: in content!
       const buffer = Buffer.from(await file.arrayBuffer());
       const uploaded = await new Promise<any>((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -125,37 +152,38 @@ export async function POST(request: Request) {
         );
         stream.end(buffer);
       });
-      imagesUrls.push(uploaded.secure_url);
+      newImageUrls.push(uploaded.secure_url);
     }
 
-    // Replace blob src in content with Cloudinary URLs
-    const indexObj = { i: 0 };
-    if (content) {
-      content = replaceImageSrc(content, imagesUrls, indexObj);
+    // Replace only "blob:" image srcs in content with Cloudinary URLs
+    if (content && newImageUrls.length > 0) {
+      content = replaceImageSrcs(content, newImageUrls);
     }
+
+    // After replacement, get all final image URLs in content (should all be proper URLs)
+    const finalImageUrlsInContent = content ? extractImageSrcsFromContent(content) : [];
 
     // Fetch existing noteBody
     const existingBody = await prisma.noteBody.findUnique({ where: { noteId } });
 
-    // Determine which old images were removed
+    // Determine which old images were removed from content
     const oldImages = existingBody?.images || [];
-    const removedImages = oldImages.filter(url => !imagesUrls.includes(url));
+    const removedImages = oldImages.filter(
+      url => !finalImageUrlsInContent.includes(url)
+    );
 
     // Delete removed images from Cloudinary
     for (const url of removedImages) {
       try {
         const publicId = getPublicIdFromUrl(url);
-        await cloudinary.uploader.destroy(publicId);
+        if (publicId) await cloudinary.uploader.destroy(publicId);
       } catch (err) {
         console.error("Failed to delete image from Cloudinary:", url, err);
       }
     }
 
-    // Merge remaining old images with new ones
-    const finalImages = [
-      ...oldImages.filter(url => !removedImages.includes(url)), // keep old images not removed
-      ...imagesUrls, // add newly uploaded images
-    ];
+    // Save only images that remain referenced in content
+    const finalImages = finalImageUrlsInContent;
 
     // Save or update NoteBody
     const noteBody = existingBody

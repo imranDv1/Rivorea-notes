@@ -222,7 +222,7 @@ export function SimpleEditor({
   const editor = useEditor({
     immediatelyRender: false,
     shouldRerenderOnTransaction: false,
-    editable: edit, // initial value
+    editable: edit, 
     content: (() => {
       if (!content) return "";
       if (typeof content === "string") return content;
