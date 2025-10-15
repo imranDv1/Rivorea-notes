@@ -17,7 +17,7 @@ import { Notebook } from "lucide-react";
 
 export default function Page() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 items-center">
+    <div className="mt-5 grid grid-cols-1 lg:grid-cols-3 items-center">
       <div>
         <Card>
           <CardHeader>
