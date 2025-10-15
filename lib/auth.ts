@@ -18,7 +18,6 @@ export const auth = betterAuth({
     expo({
  
     }),
-    nextCookies(), // <-- last
   ],
 
     socialProviders : {
