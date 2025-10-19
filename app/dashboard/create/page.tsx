@@ -20,10 +20,10 @@ const Page = () => {
 
     const fetchNotes = async () => {
       try {
-        const res = await fetch("/api/notes", {
-          method: "POST",
+        const res = await fetch(`/api/notes?userId=${userId}`, {
+          method: "GET",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId }), // <-- صح
+          cache: "no-cache"
         });
 
         if (!res.ok) throw new Error("Failed to fetch notes");

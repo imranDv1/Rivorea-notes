@@ -1,19 +1,28 @@
-'use server'
+"use server";
 
-import { toast } from "sonner";
+import { revalidatePath } from "next/cache";
 
-export async function CreateNote(data : object) {
-     try {
-     await fetch("/api/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-    
+type Data = {
+  userId: string | undefined;
+  title: string;
+  description: string;
+  category: string[];
+};
 
-      toast.success("note created sucessfully ");
-    } catch (error) {
-      const e = error as Error;
-      toast.error(e.message);
-    }
+export async function CreateNote(data: Data) {
+  try {
+   await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/create`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+
+    revalidatePath("/dashboard/create");
+    return { success: true };
+  } catch (error) {
+    return { success: false , error };
+  }
 }
+
+

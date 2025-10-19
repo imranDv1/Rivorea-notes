@@ -18,7 +18,7 @@ export async function POST(request: Request) {
         return NextResponse.json({message:"place enter the category "})
     }
 
-    const prisma = await new PrismaClient()
+    const prisma =  new PrismaClient()
  
     try {
         await prisma.note.create({

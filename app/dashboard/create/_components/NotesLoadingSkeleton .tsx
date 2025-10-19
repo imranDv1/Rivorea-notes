@@ -33,7 +33,7 @@ const NoteCardSkeleton = () => (
 );
 
 const NotesLoadingSkeleton = ({ count = 6 }: { count?: number }) => (
-  <div className="w-full flex flex-col gap-5">
+  <div className="w-full flex flex-col gap-5 mt-4">
     {/* Header */}
     <div className="w-full flex justify-between items-center">
       <Skeleton className="h-8 w-40" />

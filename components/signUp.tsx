@@ -20,6 +20,7 @@ import { useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { SignUp } from "@/server/action";
 
 const formSchema = z.object({
   name: z.string().min(3),
@@ -39,29 +40,20 @@ export default function SignUpPage() {
 
   const [Loading, setLoading] = useState(false);
   const [googlePending, startGoogleTransiton] = useTransition();
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await authClient.signUp.email(
-      {
-        email: values.email, // user email address
-        password: values.password, // user password -> min 8 characters by default
-        name: values.name, // user display name
-        callbackURL: "/dashboard", // A URL to redirect to after the user verifies their email (optional)
-      },
-      {
-        onRequest: (ctx) => {
-          setLoading(true);
-        },
-        onSuccess: () => {
-          toast.success("Sign up sucess fully ");
-          setLoading(false);
-        },
-        onError: (ctx) => {
-          toast.error(ctx.error.message);
-          setLoading(false);
-        },
+    setLoading(true);
+    try {
+      const result = await SignUp(values);
+      if (result.success) {
+        toast.success("Sign up successful");
+      } else {
+        toast.error(result.error?.message || "Something went wrong");
       }
-    );
+    } catch {
+      toast.error("Unexpected error");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function SignInWithGoogle() {

@@ -155,7 +155,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       if (!session?.user.id) return;
 
       try {
-        const res = await fetch(`/api/user/profile?userId=${session.user.id}`);
+        const res = await fetch(`/api/user/profile?userId=${session.user.id}`, {cache: "no-cache"});
         const data = await res.json();
         if (data.success) {
           setUserData({

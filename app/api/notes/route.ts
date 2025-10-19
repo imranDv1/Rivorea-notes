@@ -1,9 +1,10 @@
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+export async function GET(request: Request) {
   try {
-    const { userId } = await request.json();
+    const { searchParams } = new URL(request.url);
+    const  userId  = searchParams.get("userId");
 
     if (!userId) {
       return NextResponse.json({ message: "userId is required" }, { status: 400 });
