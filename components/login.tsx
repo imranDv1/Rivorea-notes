@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { redirect } from "next/navigation";
 
 const formSchema = z.object({
   email: z.email(),
@@ -26,6 +27,8 @@ const formSchema = z.object({
 });
 
 export default function LoginPage() {
+
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -34,29 +37,28 @@ export default function LoginPage() {
     },
   });
 
+  
+
   const [Loading, setLoading] = useState(false);
   const [googlePending, startGoogleTransiton] = useTransition();
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
-   await authClient.signIn.email({
-    email : values.email,
-    password : values.password,
-    fetchOptions : {
-      onSuccess : ()=> {
-        toast.success("Sign up successful");
-        
-      }, onError : (ctx) => {
-        toast.error(ctx.error.message || "Something went wrong");
-
-      }
-    }
-
-   } 
-  )
-      } 
-     catch {
+      await authClient.signIn.email({
+        email: values.email,
+        password: values.password,
+        fetchOptions: {
+          onSuccess: () => {
+            toast.success("Sign up successful");
+          },
+          onError: (ctx) => {
+            toast.error(ctx.error.message || "Something went wrong");
+          },
+        },
+      });
+    } catch {
       toast.error("Unexpected error");
     } finally {
       setLoading(false);
