@@ -4,8 +4,7 @@ import { nextCookies } from "better-auth/next-js";
 import { expo } from "@better-auth/expo";
 import { prisma } from "./db";
 
-// If your Prisma file is located elsewhere, you can change the path
-const isMobile = typeof navigator !== "undefined" && navigator.userAgent.includes("Expo");
+
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -19,9 +18,8 @@ export const auth = betterAuth({
 
   socialProviders: {
     google: {
-        clientId: isMobile
-        ? process.env.GOOGLE_CLIENT_ID_ANDROID!
-        : process.env.GOOGLE_CLIENT_ID_WEB!,
+      clientId: process.env.GOOGLE_CLIENT_ID_ANDROID!,
+  
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
