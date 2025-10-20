@@ -65,6 +65,7 @@ export async function SignIn(data: SignInTypes): Promise<SignUpResult> {
         password: data.password, // user password -> min 8 characters by default
         callbackURL: "/dashboard",
       },
+      
     });
     revalidatePath("/login");
     return { success: true };

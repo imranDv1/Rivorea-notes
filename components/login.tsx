@@ -18,7 +18,7 @@ import {
 import { toast } from "sonner";
 import { useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { SignIn } from "@/server/action";
 
@@ -45,6 +45,7 @@ export default function LoginPage() {
       const result = await SignIn(values);
       if (result.success) {
         toast.success("Sign up successful");
+        return redirect("/dashboard")
       } else {
         toast.error(result.error?.message || "Something went wrong");
       }
