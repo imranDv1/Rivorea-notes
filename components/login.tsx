@@ -18,9 +18,7 @@ import {
 import { toast } from "sonner";
 import { useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
-import { redirect, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { SignIn } from "@/server/action";
 
 const formSchema = z.object({
   email: z.email(),
@@ -42,14 +40,23 @@ export default function LoginPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
-      const result = await SignIn(values);
-      if (result.success) {
+   await authClient.signIn.email({
+    email : values.email,
+    password : values.password,
+    fetchOptions : {
+      onSuccess : ()=> {
         toast.success("Sign up successful");
-        return redirect("/dashboard")
-      } else {
-        toast.error(result.error?.message || "Something went wrong");
+        
+      }, onError : (ctx) => {
+        toast.error(ctx.error.message || "Something went wrong");
+
       }
-    } catch {
+    }
+
+   } 
+  )
+      } 
+     catch {
       toast.error("Unexpected error");
     } finally {
       setLoading(false);

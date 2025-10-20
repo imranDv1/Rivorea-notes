@@ -50,27 +50,27 @@ export async function SignUp(data: SignUpTypes): Promise<SignUpResult> {
   }
 }
 
-export async function SignIn(data: SignInTypes): Promise<SignUpResult> {
-  const req = await request();
-  const decision = await aj.protect(req, {
-    email: data.email,
-  });
-  if (!decision.isAllowed())
-    return { success: false, error: { message: "Email is not valid" } };
+// export async function SignIn(data: SignInTypes): Promise<SignUpResult> {
+//   const req = await request();
+//   const decision = await aj.protect(req, {
+//     email: data.email,
+//   });
+//   if (!decision.isAllowed())
+//     return { success: false, error: { message: "Email is not valid" } };
 
-  try {
-    await auth.api.signInEmail({
-      body: {
-        email: data.email, // user email address
-        password: data.password, // user password -> min 8 characters by default
-        callbackURL: "/dashboard",
-      },
-      
-    });
-    revalidatePath("/login");
-    return { success: true };
-  } catch (err) {
-    const error = err as Error;
-    return { success: false, error };
-  }
-}
+//   try {
+//     await auth.api.signInEmail({
+//       body: {
+//         email: data.email, // user email address
+//         password: data.password, // user password -> min 8 characters by default
+//         callbackURL: "/dashboard",
+//       },
+
+//     });
+//     revalidatePath("/login");
+//     return { success: true };
+//   } catch (err) {
+//     const error = err as Error;
+//     return { success: false, error };
+//   }
+// }
