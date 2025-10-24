@@ -188,7 +188,7 @@
                 alt="AI"
                 width={40}
                 height={40}
-                className="rounded-full"
+                className="rounded-full object-cover"
               />
               Chat with NoteBuddy
             </DialogTitle>
@@ -213,7 +213,7 @@
                       alt={msg.name}
                       width={40}
                       height={40}
-                      className="rounded-full object-cover"
+                      className="rounded-full object-cover w-10 h-10"
                     />
                     <div className="flex flex-col gap-1 max-w-[70%]">
                       <span
@@ -258,7 +258,7 @@
                     alt="AI"
                     width={40}
                     height={40}
-                    className="rounded-full"
+                    className="rounded-full object-cover"
                   />
                   <div className="flex gap-1">
                     <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75"></span>
