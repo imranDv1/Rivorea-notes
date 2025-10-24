@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@/lib/generated/prisma";
-import { generateNoteBody } from "@/lib/gemini";
+import { generateNoteBody } from "@/lib/openAi";
 
 const prisma = new PrismaClient();
 
@@ -34,8 +34,10 @@ export async function POST(request: Request) {
 
     // توليد النص باستخدام AI
     const body = await generateNoteBody(title);
+     // lets make the body is styled for tip tap editor use markdown format
 
-    return NextResponse.json({ body });
+     const styledBody = body; // هنا يمكنك إضافة أي تنسيق إضافي إذا لزم الأمر
+    return NextResponse.json({ body: styledBody }, { status: 200 });
 
   } catch (error) {
     console.error("Error in AI route:", error);

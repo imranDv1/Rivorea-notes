@@ -48,7 +48,7 @@ const data = {
 
     {
       title: "Tasks",
-      url: "/dashaboard/tasks",
+      url: "/dashboard/tasks",
       icon: ClipboardCheck,
     },
     {

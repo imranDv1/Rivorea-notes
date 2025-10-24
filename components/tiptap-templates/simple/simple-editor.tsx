@@ -83,6 +83,7 @@ import { JsonValue } from "@/lib/generated/prisma/runtime/library";
 import Link from "next/link";
 import CustomButton from "@/components/CustomButton";
 import { useEditorNotificationStore } from "@/context/simpleEditorupddate";
+import { convertMarkdownHeadingsToHtml } from "@/lib/converMarkdownHeading";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -223,15 +224,17 @@ export function SimpleEditor({
     immediatelyRender: false,
     shouldRerenderOnTransaction: false,
     editable: edit, 
-    content: (() => {
-      if (!content) return "";
-      if (typeof content === "string") return content;
-      try {
-        return content as JSONContent;
-      } catch {
-        return "";
-      }
-    })(),
+   content: (() => {
+  if (!content) return "";
+  if (typeof content === "string")
+    // Convert Markdown headings (#, ##, ###, ...) to HTML <h1>-<h6> before passing to TipTap
+    return convertMarkdownHeadingsToHtml(content);
+  try {
+    return content as JSONContent;
+  } catch {
+    return "";
+  }
+})(),
     editorProps: {
       attributes: {
         class: "simple-editor",
@@ -406,82 +409,8 @@ export function SimpleEditor({
 
             <span></span>
             {/* the ai button open dialog 👇 */}
-            {/* <CustomButton /> */}
+            <CustomButton />
 
-            <button
-              onClick={() => toast.error("AI is still in development.")}
-              className="hover:cursor-pointer group relative dark:bg-neutral-800 bg-neutral-200 p-px overflow-hidden rounded-xl"
-            >
-              {/* 🌟 Fancy background */}
-              <span className="absolute inset-0 overflow-hidden">
-                <span className="inset-0 absolute pointer-events-none select-none">
-                  <span
-                    className="block -translate-x-1/2 -translate-y-1/3 size-24 blur-xl"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, rgb(122, 105, 249), rgb(242, 99, 120), rgb(245, 131, 63))",
-                    }}
-                  />
-                </span>
-              </span>
-
-              <span
-                className="inset-0 absolute pointer-events-none select-none"
-                style={{
-                  animation:
-                    "10s ease-in-out infinite alternate border-glow-translate",
-                }}
-              >
-                <span
-                  className="block z-0 h-full w-12 blur-xl -translate-x-1/2"
-                  style={{
-                    animation:
-                      "10s ease-in-out infinite alternate border-glow-scale",
-                    background:
-                      "linear-gradient(135deg, rgb(122, 105, 249), rgb(242, 99, 120), rgb(245, 131, 63))",
-                  }}
-                />
-              </span>
-
-              {/* Button inner content */}
-              <span className="flex items-center justify-center gap-1 relative z-[1] dark:bg-neutral-950/90 bg-neutral-50/90 py-2 px-4 pl-2 w-full rounded-xl">
-                <span className="relative group-hover:scale-105 transition-transform group-hover:rotate-[360deg] duration-500">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="opacity-80 dark:opacity-100"
-                  >
-                    <path
-                      d="M11.5 2.3c.05-.1.12-.2.2-.25.08-.05.18-.08.28-.08s.2.03.28.08c.08.05.15.15.2.25l2.3 4.7c.15.3.38.57.66.77.28.2.61.34.96.38l5.2.76c.1.02.2.07.27.13.07.06.13.15.16.24.03.09.04.2.01.29a.55.55 0 0 1-.18.27l-3.74 3.64c-.25.24-.43.53-.52.85-.1.32-.12.66-.06.99l.88 5.14c.02.1.01.21-.03.31-.04.1-.1.18-.19.25a.52.52 0 0 1-.33.1c-.1 0-.2-.02-.29-.07l-4.6-2.42a2.3 2.3 0 0 0-2.33 0l-4.6 2.42c-.09.05-.19.07-.29.07a.52.52 0 0 1-.33-.1c-.09-.07-.15-.16-.19-.25-.04-.1-.05-.21-.03-.31l.88-5.14c.06-.33.03-.67-.06-.99a2.3 2.3 0 0 0-.52-.85L2 9.8a.55.55 0 0 1-.18-.27.58.58 0 0 1 .01-.29c.03-.09.09-.18.16-.24.07-.06.17-.11.27-.13l5.2-.76c.35-.05.68-.18.96-.38.28-.2.51-.47.66-.77l2.3-4.7Z"
-                      fill="url(#grad)"
-                      stroke="url(#grad)"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <defs>
-                      <linearGradient
-                        id="grad"
-                        x1="0"
-                        y1="0"
-                        x2="24"
-                        y2="24"
-                        gradientUnits="userSpaceOnUse"
-                      >
-                        <stop stopColor="#7A69F9" />
-                        <stop offset="0.5" stopColor="#F26378" />
-                        <stop offset="1" stopColor="#F5833F" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                </span>
-                <span className="ml-1.5 text-xs bg-gradient-to-b dark:from-white dark:to-white/50 from-neutral-950 to-neutral-950/50 bg-clip-text text-transparent group-hover:scale-105 transition transform-gpu">
-                  AI
-                </span>
-              </span>
-            </button>
 
             <ShadcnButton disabled={SaveLoading} size="sm" onClick={handleSave}>
               {SaveLoading ? (

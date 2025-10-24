@@ -1,0 +1,431 @@
+
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "heading",
+      "attrs": {
+        "level": 1
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Major Outage Event: AWS Global Disruption - October 2025"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "On October 15, 2025, Amazon Web Services experienced a significant global disruption, impacting multiple core services across several key regions. The incident, which began around 09:30 UTC, sent ripples through the digital economy, bringing down countless applications and websites worldwide for several hours."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "level": 2
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Initial Impact & Scope"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "The outage primarily affected the US-East-1 (Northern Virginia), EU-West-1 (Ireland), and AP-Southeast-2 (Sydney) regions, with cascading effects observed in other areas as dependent services struggled. Key services that reported widespread issues included:"
+        }
+      ]
+    },
+    {
+      "type": "bulletList",
+      "content": [
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "Amazon EC2"
+                },
+                {
+                  "type": "text",
+                  "text": ": Instances became unreachable, new launches failed."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "Amazon S3"
+                },
+                {
+                  "type": "text",
+                  "text": ": Object storage access was severely degraded, leading to website outages and data retrieval failures."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "AWS Lambda"
+                },
+                {
+                  "type": "text",
+                  "text": ": Serverless functions failed to execute, impacting event-driven architectures."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "Amazon RDS"
+                },
+                {
+                  "type": "text",
+                  "text": ": Database connectivity issues and operational disruptions were reported."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "Amazon CloudWatch"
+                },
+                {
+                  "type": "text",
+                  "text": ": Monitoring data became sporadic or unavailable, hindering incident response for many users."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "level": 2
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Root Cause Analysis"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "Initial reports from AWS pointed to a complex interplay of factors. A routine infrastructure update in a core networking component within the US-East-1 region triggered an unforeseen cascading failure due to a previously undetected race condition in the control plane software. This led to an overload of internal API calls, preventing crucial service health checks from updating correctly and exacerbating the issue."
+        }
+      ]
+    },
+    {
+      "type": "codeBlock",
+      "attrs": {
+        "language": "json"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"event\": \"AWS_NET_CTRL_PLANE_FAILURE\",\n  \"region\": \"us-east-1\",\n  \"timestamp\": \"2025-10-15T09:32:15Z\",\n  \"error_code\": \"RESOURCE_EXHAUSTION\",\n  \"message\": \"Internal API call rate exceeded, service health checks degraded.\"\n}"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "level": 2
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Customer Response & Business Impact"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "The outage had an immediate and severe impact on businesses globally. From e-commerce platforms experiencing significant revenue loss to SaaS providers facing customer dissatisfaction and service level agreement (SLA) breaches, the incident underscored the critical dependency on cloud infrastructure. Many startups and established enterprises, especially those with single-region deployments, were completely offline. Social media platforms were abuzz with developers and operations teams scrambling to understand and mitigate the effects."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "level": 2
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "AWS's Response & Resolution"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "AWS engineers worked tirelessly to diagnose and resolve the issue. Communication was initially sparse but improved as the situation became clearer. Updates were provided via the AWS Service Health Dashboard and their official Twitter accounts. Services began to progressively recover around 14:00 UTC, with full restoration and operational stability achieved by 18:00 UTC for most affected components. A detailed post-mortem analysis is expected to be released, similar to past major incidents."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "italic"
+            }
+          ],
+          "text": "For official updates, refer to the "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "link",
+              "attrs": {
+                "href": "https://status.aws.amazon.com/archive",
+                "target": "_blank",
+                "rel": "noopener noreferrer nofollow"
+              }
+            },
+            {
+              "type": "italic"
+            }
+          ],
+          "text": "AWS Service Health Dashboard Archive"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "italic"
+            }
+          ],
+          "text": "."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "level": 2
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Lessons Learned & Future Preparedness"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "This incident serves as a stark reminder of the importance of robust disaster recovery strategies. "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "bold"
+            }
+          ],
+          "text": "Multi-region and multi-cloud architectures"
+        },
+        {
+          "type": "text",
+          "text": " are gaining renewed attention, as single points of failure, even within a highly redundant cloud, can have far-reaching consequences. Businesses are encouraged to review their resilience plans, focusing on:"
+        }
+      ]
+    },
+    {
+      "type": "bulletList",
+      "content": [
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Implementing "
+                },
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "active-active or active-passive multi-region setups"
+                },
+                {
+                  "type": "text",
+                  "text": "."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Diversifying critical workloads across "
+                },
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ],
+                  "text": "different cloud providers"
+                },
+                {
+                  "type": "text",
+                  "text": " where feasible."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Enhancing "
+                },
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "observability and alert systems"
+                },
+                {
+                  "type": "text",
+                  "text": " independent of core cloud services."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Regularly testing disaster recovery procedures."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "italic"
+            }
+          ],
+          "text": "Proactive planning is paramount to minimize downtime and ensure business continuity."
+        }
+      ]
+    }
+  ]
+}
