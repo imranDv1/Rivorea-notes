@@ -15,19 +15,20 @@ datasource db {
 }
 
 model User {
-  id            String         @id
-  name          String
-  email         String
-  emailVerified Boolean        @default(false)
-  image         String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @default(now()) @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  Note          Note[]
-  FavoriteNote  FavoriteNote[]
-  subscription  Subscription?
-  UserPlusInfo  UserPlusInfo?
+  id              String           @id
+  name            String
+  email           String
+  emailVerified   Boolean          @default(false)
+  image           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @default(now()) @updatedAt
+  sessions        Session[]
+  accounts        Account[]
+  Note            Note[]
+  FavoriteNote    FavoriteNote[]
+  subscription    Subscription?
+  UserPlusInfo    UserPlusInfo?
+  PasswordManeger PasswordManeger?
 
   @@unique([email])
   @@map("user")
@@ -125,9 +126,22 @@ model Subscription {
 }
 
 model UserPlusInfo {
-  id     String @id @default(uuid())
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @unique
-  gender String
+  id      String @id @default(uuid())
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String @unique
+  gender  String
   country String
+}
+
+model PasswordManeger {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String   @unique
+  title       String
+  description String
+  emailOruser String
+  password    String
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 }
