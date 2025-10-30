@@ -46,9 +46,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Suspense, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import CreateNewPass, { DeletePass, EditPass } from "../action";
+import CreateNewPass, {
+  DeletePass,
+  EditPass,
+  type EditPassPayload,
+} from "../action";
 import { toast } from "sonner";
 import { useAddPassNotificationStore } from "@/context/addPass";
 import { Spinner } from "@/components/ui/spinner";
@@ -75,7 +79,7 @@ type PassForm = {
 };
 
 const PassComponent = ({ pass }: GetPass) => {
-  const { register, handleSubmit, control, reset } = useForm<PassForm>({
+  const { register, handleSubmit, control } = useForm<PassForm>({
     defaultValues: {
       title: "",
       username: "",
@@ -126,7 +130,7 @@ const PassComponent = ({ pass }: GetPass) => {
 
   const onSubmitEdit: SubmitHandler<Partial<PassForm>> = async (values) => {
     if (!EditTarget) return;
-    const payload: any = { id: EditTarget.id };
+    const payload: EditPassPayload = { id: EditTarget.id };
     if (values.title) payload.title = values.title;
     if (values.description) payload.description = values.description;
     if (values.username) payload.emailOruser = values.username;
