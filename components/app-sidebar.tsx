@@ -27,7 +27,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { ClipboardCheck, Files, FileText, LayoutDashboard } from "lucide-react";
+import {
+  ClipboardCheck,
+  FileKey2,
+  Files,
+  FileText,
+  LayoutDashboard,
+} from "lucide-react";
 import { Logo } from "./logo";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
@@ -47,9 +53,10 @@ const data = {
     },
 
     {
-      title: "Tasks",
-      url: "/dashboard/tasks",
-      icon: ClipboardCheck,
+      title: "Password Manager",
+      url: "/dashboard/passwords",
+      icon: FileKey2,
+      badge: "new",
     },
     {
       title: "Workspaces",
@@ -155,7 +162,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       if (!session?.user.id) return;
 
       try {
-        const res = await fetch(`/api/user/profile?userId=${session.user.id}`, {cache: "no-cache"});
+        const res = await fetch(`/api/user/profile?userId=${session.user.id}`, {
+          cache: "no-cache",
+        });
         const data = await res.json();
         if (data.success) {
           setUserData({

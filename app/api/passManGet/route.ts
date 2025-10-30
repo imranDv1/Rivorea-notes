@@ -7,7 +7,7 @@ import { title } from "process";
 import { ca } from "zod/v4/locales";
 
 export async function POST(request: Request) {
-const { userId } = await request.json();
+  const { userId } = await request.json();
 
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -41,6 +41,9 @@ const { userId } = await request.json();
 
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
