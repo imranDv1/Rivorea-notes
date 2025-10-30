@@ -1,7 +1,10 @@
 "use server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { IconArrowAutofitRight } from "@tabler/icons-react";
 import { headers } from "next/headers";
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL;
 
 export default async function CreateNewPass(formData: FormData) {
   const session = await auth.api.getSession({
@@ -17,7 +20,7 @@ export default async function CreateNewPass(formData: FormData) {
   const password = formData.get("password") as string;
   const category = formData.get("category") as string;
   try {
-    const res = await fetch("/api/passMan", {
+    const res = await fetch(`${BASE_URL}/api/passMan`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -30,7 +33,7 @@ export default async function CreateNewPass(formData: FormData) {
       }),
     });
     if (!res.ok) {
-      console.log(await res.json());
+      console.log(`try to create new Pass: ${await res.json()}`);
       return { success: false, message: "error create new Pass" };
     }
     return { success: true, message: "Pass create successfuly" };
@@ -57,7 +60,7 @@ export async function EditPass(payload: EditPassPayload) {
     return { success: false, message: "Unauthorized" };
   }
   try {
-    const res = await fetch("/api/passEdit", {
+    const res = await fetch(`${BASE_URL}/api/passEdit`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -88,7 +91,7 @@ export async function DeletePass(id: string) {
   }
   const userId = session.user.id;
   try {
-    const res = await fetch("/api/passDelete", {
+    const res = await fetch(`${BASE_URL}/api/passDelete`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, userId }),
