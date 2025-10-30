@@ -233,9 +233,9 @@ const PassComponent = ({ pass }: GetPass) => {
       const res = await DeletePass(PassTodelete);
       if (res.success) {
         toast.success(res.message);
-        refreshAddPass();
         setDeleteLoading(false);
         setDeleteDialogOpen(false);
+        refreshAddPass();
       } else {
         toast.error(res.message);
         setDeleteLoading(false);

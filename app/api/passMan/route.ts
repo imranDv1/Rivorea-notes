@@ -12,7 +12,6 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    console.log(userId);
     if (!title) {
       return NextResponse.json(
         { message: "title is required" },
