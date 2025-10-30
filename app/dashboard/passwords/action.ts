@@ -17,7 +17,7 @@ export default async function CreateNewPass(formData: FormData) {
   const password = formData.get("password") as string;
   const category = formData.get("category") as string;
   try {
-    const res = await fetch("http://localhost:3000/api/passMan", {
+    const res = await fetch("/api/passMan", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -57,7 +57,7 @@ export async function EditPass(payload: EditPassPayload) {
     return { success: false, message: "Unauthorized" };
   }
   try {
-    const res = await fetch("http://localhost:3000/api/passEdit", {
+    const res = await fetch("/api/passEdit", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -88,7 +88,7 @@ export async function DeletePass(id: string) {
   }
   const userId = session.user.id;
   try {
-    const res = await fetch("http://localhost:3000/api/passDelete", {
+    const res = await fetch("/api/passDelete", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, userId }),
