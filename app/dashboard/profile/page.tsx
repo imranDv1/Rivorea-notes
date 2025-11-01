@@ -105,7 +105,7 @@ const ProfilePage = () => {
 
   return (
     <div className="w-full h-screen">
-      <Card>
+      <Card className="mt-3">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span>Your Profile Info</span>
@@ -175,7 +175,7 @@ const ProfilePage = () => {
         <CardFooter>
           <Button
             disabled={edit || saveLoading}
-            className="text-white w-full"
+            className=" w-full"
             variant="outline"
             onClick={handleSave}
           >
