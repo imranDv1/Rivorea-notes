@@ -335,7 +335,7 @@ const PassComponent = ({ pass }: GetPass) => {
               </div>
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button type="button" variant="outline">
+                  <Button type="button" variant="outline" onClick={()=> closeDialog(!DialogOpen)}>
                     Cancel
                   </Button>
                 </DialogClose>

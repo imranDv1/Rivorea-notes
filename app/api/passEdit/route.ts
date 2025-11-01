@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import bcrypt from "bcrypt";
+import { encryptPassword } from "@/lib/password-encryption";
 
 export async function PUT(request: Request) {
   try {
@@ -20,7 +20,7 @@ export async function PUT(request: Request) {
     if (typeof category === "string" && category.length > 0)
       data.category = category;
     if (typeof password === "string" && password.length > 0)
-      data.password = bcrypt.hashSync(password, 10);
+      data.password = encryptPassword(password);
 
     if (Object.keys(data).length === 0) {
       return NextResponse.json(

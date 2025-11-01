@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
+import { encryptPassword } from "@/lib/password-encryption";
 export async function POST(request: Request) {
   try {
     const { userId, title, description, emailOruser, password, category } =
@@ -47,9 +47,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // how to download bcrypt in nextjs 15 app directory using pnpm
-
-    const hashPassword = bcrypt.hashSync(password, 10);
+    // Encrypt the password using AES-256-GCM (reversible encryption)
+    const encryptedPassword = encryptPassword(password);
 
     const PassMan = await prisma.passwordManeger.create({
       data: {
@@ -57,7 +56,7 @@ export async function POST(request: Request) {
         title,
         description,
         emailOruser,
-        password: hashPassword,
+        password: encryptedPassword,
         category,
       },
     });

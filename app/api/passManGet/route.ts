@@ -1,10 +1,8 @@
-import { description } from "@/components/chart-area-interactive";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { title } from "process";
-import { ca } from "zod/v4/locales";
+import { decryptPassword } from "@/lib/password-encryption";
 
 export async function POST(request: Request) {
   const { userId } = await request.json();
@@ -29,15 +27,26 @@ export async function POST(request: Request) {
       },
     });
 
-    // lets return the PassMan as array of objects
-    const response = PassMan.map((item) => ({
-      id: item.id,
-      title: item.title,
-      username: item.emailOruser,
-      password: item.password,
-      description: item.description,
-      category: item.category,
-    }));
+    // lets return the PassMan as array of objects with decrypted passwords
+    const response = PassMan.map((item) => {
+      let decryptedPassword = "";
+      try {
+        decryptedPassword = decryptPassword(item.password);
+      } catch (error) {
+        console.error("Failed to decrypt password for item:", item.id, error);
+        // If decryption fails (e.g., old bcrypt hash), return empty string
+        decryptedPassword = "";
+      }
+
+      return {
+        id: item.id,
+        title: item.title,
+        username: item.emailOruser,
+        password: decryptedPassword,
+        description: item.description,
+        category: item.category,
+      };
+    });
 
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
