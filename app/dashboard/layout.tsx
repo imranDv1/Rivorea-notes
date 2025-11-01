@@ -1,7 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-
+import { Analytics } from "@vercel/analytics/next"
 import { ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { DialogProvider } from "@/context/CreateDialogContext";
@@ -16,6 +16,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         } as React.CSSProperties
       }
     >
+      <Analytics/>
       <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
