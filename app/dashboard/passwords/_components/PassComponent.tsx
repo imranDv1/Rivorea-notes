@@ -249,14 +249,14 @@ const PassComponent = ({ pass }: GetPass) => {
 
   return (
     <div className="w-full min-h-screen flex flex-col gap-5 ">
-      <div className="flex flex-col lg:flex-row  items-center justify-between ">
+      <div className="flex flex-col lg:flex-row  items-center justify-between  gap-3">
         <div className="flex flex-col gap-1">
           <h1 className="text-3xl font-bold ">Password Management</h1>
           <p className="text-md text-muted-foreground">
             Manage all your passwords securely to not forget them again
           </p>
         </div>
-        <Button onClick={() => closeDialog(!DialogOpen)}>
+        <Button className="w-full md:w-min" onClick={() => closeDialog(!DialogOpen)}>
           Create new Passwords
         </Button>
         <Dialog open={DialogOpen}>
@@ -335,7 +335,11 @@ const PassComponent = ({ pass }: GetPass) => {
               </div>
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button type="button" variant="outline" onClick={()=> closeDialog(!DialogOpen)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => closeDialog(!DialogOpen)}
+                  >
                     Cancel
                   </Button>
                 </DialogClose>
@@ -508,6 +512,18 @@ const PassComponent = ({ pass }: GetPass) => {
             <SkeletonCard />
             <SkeletonCard />
           </>
+        )}
+        {!isLoadingPasses && filteredPasses.length === 0 && (
+          <div className="col-span-full flex flex-col items-center justify-center py-16 text-center border rounded-lg">
+            <KeyRound className="mb-4" />
+            <h3 className="text-xl font-semibold">No passwords yet</h3>
+            <p className="text-muted-foreground mb-6">
+              Create your first password to get started.
+            </p>
+            <Button onClick={() => closeDialog(true)}>
+              Create new Password
+            </Button>
+          </div>
         )}
         {!isLoadingPasses &&
           filteredPasses.map((pass) => (
