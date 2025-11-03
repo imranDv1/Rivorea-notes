@@ -5,7 +5,10 @@ import React, { useEffect, useState } from "react";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 import { authClient } from "@/lib/auth-client";
 import { useEditorNotificationStore } from "@/context/simpleEditorupddate";
-import { ShieldOff } from "lucide-react";
+import { ArrowLeftToLine, ShieldOff } from "lucide-react";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type tParams = { id: string };
 
@@ -98,7 +101,8 @@ const Page = (props: { params: Promise<tParams> }) => {
 
   if (error) {
     return (
-      <div className="w-full h-screen flex  items-center justify-center p-6">
+      <div className="w-full h-screen flex flex-col gap-3  items-center justify-center p-6">
+        <Link className={cn(buttonVariants({variant:"outline"}),  "flex items-center gap-3")} href='/dashboard/create'><ArrowLeftToLine /> Back to your notes </Link>
         <div className="text-center flex items-center gap-4 bg-red-500/10 p-3 rounded-md border-2 border-red-600">
         <ShieldOff className="text-red-600 size-8" />
           <p className="text-red-600 text-3xl font-medium">{error}</p>
