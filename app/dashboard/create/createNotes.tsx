@@ -482,6 +482,9 @@ const CreateNotesPage = ({ notes }: CreateNotesProps) => {
                 </Button>
               </form>
             </Form>
+            <Button variant="outline" onClick={() => closeDialog()}>
+              Cancel
+            </Button>
           </DialogContent>
         </Dialog>
       </div>
@@ -901,7 +904,7 @@ const CreateNotesPage = ({ notes }: CreateNotesProps) => {
                 ))}
               </div>
 
-              <DialogFooter>
+              <DialogFooter className="">
                 <Button type="submit" disabled={loading} className="w-full">
                   {loading ? (
                     <Loader2 className="animate-spin size-4" />
@@ -912,6 +915,9 @@ const CreateNotesPage = ({ notes }: CreateNotesProps) => {
               </DialogFooter>
             </form>
           </Form>
+          <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+            Cancel
+          </Button>
         </DialogContent>
       </Dialog>
     </div>
