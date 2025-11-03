@@ -16,25 +16,26 @@ export default async function Home() {
 
   let hasSubs = false;
 
-if (userId) {
-  const subs = await prisma.subscription.findMany({
-    where: {
-      userId
+  if (userId) {
+    const sub = await prisma.subscription.findUnique({
+      where: { userId },
+    });
+    if (sub) {
+      const now = new Date();
+      const notExpired = !sub.endDate || sub.endDate > now;
+      hasSubs = Boolean(sub.isActive && notExpired);
     }
-  });
-  hasSubs = subs.length > 0; // true إذا كان عنده اشتراك
-}
+  }
 
   return (
     <div>
       <HeroSection />
       <FeaturesSection />
       <div className="w-[90%] mx-auto">
-      <GlowingEffectDemoSecond/>
-
+        <GlowingEffectDemoSecond />
       </div>
       <Pricing userId={userId} hasSubscription={hasSubs} />
-      <FooterSection/>
+      <FooterSection />
     </div>
   );
 }

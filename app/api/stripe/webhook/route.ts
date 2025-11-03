@@ -22,45 +22,55 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Handle initial checkout session completed
+    // Helper: update our DB from a Stripe subscription object
+    const syncFromStripeSub = async (stripeSub: Stripe.Subscription) => {
+      const userId = stripeSub.metadata?.userId;
+      if (!userId) return;
+      const startSec = stripeSub.current_period_start;
+      const endSec = stripeSub.current_period_end;
+      const startDate = new Date(startSec * 1000);
+      const endDate = new Date(endSec * 1000);
+      const status = stripeSub.status; // active | trialing | past_due | canceled | unpaid | incomplete | incomplete_expired | paused
+      const now = new Date();
+      const notExpired = endDate > now;
+      const isActive = (status === "active" || status === "trialing") && notExpired;
+
+      await prisma.subscription.upsert({
+        where: { userId },
+        update: { startDate, endDate, isActive },
+        create: { userId, startDate, endDate, isActive },
+      });
+    };
+
+    // Checkout completed (initial purchase)
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
-      const userId = session.metadata?.userId;
-
-      if (userId) {
-        const startDate = new Date();
-        const endDate = new Date(new Date().setMonth(startDate.getMonth() + 1));
-
-        await prisma.subscription.upsert({
-          where: { userId },
-          update: { startDate, endDate, isActive: true },
-          create: { userId, startDate, endDate, isActive: true },
-        });
+      if (session.subscription) {
+        const stripeSub = await stripe.subscriptions.retrieve(
+          session.subscription as string
+        );
+        await syncFromStripeSub(stripeSub);
       }
     }
 
-    // Handle subscription renewal
+    // Subscription lifecycle updates
+    if (
+      event.type === "customer.subscription.created" ||
+      event.type === "customer.subscription.updated" ||
+      event.type === "customer.subscription.deleted"
+    ) {
+      const stripeSub = event.data.object as Stripe.Subscription;
+      await syncFromStripeSub(stripeSub);
+    }
+
+    // Fallback: invoice paid (renews the period)
     if (event.type === "invoice.paid") {
-      const invoice = event.data.object as any; // cast to any to fix TypeScript error
-      const subscriptionId = invoice.subscription as string | undefined;
-
-      if (!subscriptionId) {
-        console.warn("Invoice has no subscription ID, skipping");
-      } else {
-        // Retrieve Stripe subscription to get metadata (userId)
-        const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
-        const userId = stripeSubscription.metadata?.userId;
-
-        if (userId) {
-          const startDate = new Date();
-          const endDate = new Date(new Date().setMonth(startDate.getMonth() + 1));
-
-          await prisma.subscription.upsert({
-            where: { userId },
-            update: { startDate, endDate, isActive: true },
-            create: { userId, startDate, endDate, isActive: true },
-          });
-        }
+      const invoice = event.data.object as Stripe.Invoice;
+      if (invoice.subscription) {
+        const stripeSub = await stripe.subscriptions.retrieve(
+          invoice.subscription as string
+        );
+        await syncFromStripeSub(stripeSub);
       }
     }
 
