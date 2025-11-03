@@ -29,7 +29,7 @@ export default async function Home() {
     <div>
       <HeroSection />
       <FeaturesSection />
-      <div className="w-[90%] mx-auto">
+      <div className="w-[80%] mx-auto">
         <GlowingEffectDemoSecond />
       </div>
       <Pricing userId={userId} hasSubscription={hasSubs} />
