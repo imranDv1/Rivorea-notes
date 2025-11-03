@@ -256,7 +256,10 @@ const PassComponent = ({ pass }: GetPass) => {
             Manage all your passwords securely to not forget them again
           </p>
         </div>
-        <Button className="w-full md:w-min" onClick={() => closeDialog(!DialogOpen)}>
+        <Button
+          className="w-full md:w-min"
+          onClick={() => closeDialog(!DialogOpen)}
+        >
           Create new Passwords
         </Button>
         <Dialog open={DialogOpen}>

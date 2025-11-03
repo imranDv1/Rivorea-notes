@@ -44,9 +44,6 @@ export async function POST(request: NextRequest) {
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe/cancel`,
       metadata: { userId },
-      subscription_data: {
-        metadata: { userId },
-      },
     });
 
     return NextResponse.json({ url: session.url });

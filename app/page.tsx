@@ -17,14 +17,12 @@ export default async function Home() {
   let hasSubs = false;
 
   if (userId) {
-    const sub = await prisma.subscription.findUnique({
-      where: { userId },
+    const subs = await prisma.subscription.findMany({
+      where: {
+        userId,
+      },
     });
-    if (sub) {
-      const now = new Date();
-      const notExpired = !sub.endDate || sub.endDate > now;
-      hasSubs = Boolean(sub.isActive && notExpired);
-    }
+    hasSubs = subs.length > 0; // true إذا كان عنده اشتراك
   }
 
   return (

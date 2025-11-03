@@ -22,15 +22,13 @@ export async function POST(request: Request) {
       );
     }
 
-    // التحقق من اشتراك فعّال وغير منتهي
+    // التحقق إذا كان لدى المستخدم أي اشتراك
     let hasSubs = false;
     if (userId) {
-      const sub = await prisma.subscription.findUnique({ where: { userId } });
-      if (sub) {
-        const now = new Date();
-        const notExpired = !sub.endDate || sub.endDate > now;
-        hasSubs = Boolean(sub.isActive && notExpired);
-      }
+      const subs = await prisma.subscription.findMany({
+        where: { userId },
+      });
+      hasSubs = subs.length > 0;
     }
 
     if (!hasSubs) {
