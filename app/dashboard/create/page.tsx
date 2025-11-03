@@ -16,7 +16,7 @@ const Page = () => {
  const refreshSignal = useNoteNotificationStore((state) => state.refreshNoteSignal);
 
   useEffect(() => {
-    if (!userId) return; // لو مفيش user بعد ما يدخل
+    if (!userId) return; 
 
     const fetchNotes = async () => {
       try {

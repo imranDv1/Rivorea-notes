@@ -84,6 +84,7 @@ import Link from "next/link";
 import CustomButton from "@/components/CustomButton";
 import { useEditorNotificationStore } from "@/context/simpleEditorupddate";
 import { convertMarkdownHeadingsToHtml } from "@/lib/converMarkdownHeading";
+import { authClient } from "@/lib/auth-client";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -96,6 +97,7 @@ const MainToolbarContent = ({
   onSave: () => void;
 }) => {
   const imageUploadRef = React.useRef<any>(null);
+
 
   return (
     <>
