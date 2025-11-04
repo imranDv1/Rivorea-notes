@@ -28,7 +28,7 @@ export default function ContentSection() {
                         <div className="pt-6">
                             <blockquote className="border-l-4 pl-4">
                                 <p>
-                                    Rivorea Notes has transformed how I manage my ideas. It's intuitive, fast, and reliable — perfect for both quick notes and deep journaling.
+                                    Rivorea Notes has transformed how I manage my ideas. It&apos;s intuitive, fast, and reliable — perfect for both quick notes and deep journaling.
                                 </p>
 
                                 <div className="mt-6 space-y-3">
