@@ -17,7 +17,7 @@ export async function generateNoteBody(title: string): Promise<string> {
   try {
     const prompt = `
 You are NoteBuddy, an AI assistant for the Rivorea Note app.
-Given the title: "${title} but the code in code block if there is code need to be written"
+Given the title: "${title} if the user want code but the code in code block if there is code need to be written"
 
 Instructions:
 - Write a clear, concise, helpful note based on the title.
