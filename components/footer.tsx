@@ -125,8 +125,9 @@ export default function FooterSection() {
                         <Link
                             href="/"
                             aria-label="go home"
-                            className="block size-fit">
+                            className=" size-fit flex items-center gap-3">
                             <Logo />
+                            <h1>Rivorea Notes</h1>
                         </Link>
                     </div>
 

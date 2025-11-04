@@ -16,14 +16,17 @@ const openai = new OpenAI({
 export async function generateNoteBody(title: string): Promise<string> {
   try {
     const prompt = `
-You are NoteBuddy, a friendly assistant inside Rivorea Note app.
-Generate a clear and concise note based on the following title:
-"${title}"
+You are NoteBuddy, an AI assistant for the Rivorea Note app.
+Given the title: "${title} but the code in code block if there is code need to be written"
 
-Rules:
-- Respond in plain Markdown text.
-- Do NOT include code blocks, step numbers, or long explanations.
-- Just the note content, clean and easy to copy.
+Instructions:
+- Write a clear, concise, helpful note based on the title.
+- Respond in simple plain text, no Markdown formatting or special characters (like *, #, _, etc).
+- Do not repeat the title in the note.
+- Do NOT use step numbers or long explanations.
+.
+- Keep everything short, practical, and easy to read in a basic editor.
+- if there is code but it in code block i am using react-syntax-highlighter
 `;
 
     const response = await openai.chat.completions.create({
