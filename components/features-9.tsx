@@ -8,7 +8,7 @@ import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } f
 export default function FeaturesSection2() {
     return (
         <section className="px-4 ">
-            <div className="mx-auto grid max-w-7xl border md:grid-cols-2">
+            <div className="mx-auto grid max-w-6xl border md:grid-cols-2">
                 {/* Organization & Search Feature */}
                 <div>
                     <div className="p-6 sm:p-12">
