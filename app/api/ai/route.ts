@@ -4,6 +4,30 @@ import { generateNoteBody } from "@/lib/openAi";
 
 const prisma = new PrismaClient();
 
+function normalizeAiBody(raw: string, title?: string): string {
+  if (!raw) return "";
+  let text = raw.trim();
+  // remove a leading title line if it exactly matches
+  if (title) {
+    const firstLine = text.split("\n")[0]?.trim();
+    if (firstLine && firstLine.toLowerCase() === title.trim().toLowerCase()) {
+      text = text.slice(firstLine.length).trimStart();
+    }
+  }
+  const codeBlockRegex = /```([\w-]*)\n([\s\S]*?)```/;
+  if (codeBlockRegex.test(text)) {
+    // keep as-is, just trim and normalize excessive blank lines around
+    return text.replace(/\n{3,}/g, "\n\n").trim();
+  }
+  // no code: collapse whitespace and tidy paragraphs
+  return text
+    .split("\n")
+    .map((line) => line.trimEnd())
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 export async function POST(request: Request) {
   try {
     const { userId, title } = await request.json();
@@ -40,9 +64,8 @@ export async function POST(request: Request) {
 
     // توليد النص باستخدام AI
     const body = await generateNoteBody(title);
-    // lets make the body is styled for tip tap editor use markdown format
-
-    const styledBody = body; // هنا يمكنك إضافة أي تنسيق إضافي إذا لزم الأمر
+    // normalize and keep fenced code blocks intact
+    const styledBody = normalizeAiBody(body, title);
     return NextResponse.json({ body: styledBody }, { status: 200 });
   } catch (error) {
     console.error("Error in AI route:", error);

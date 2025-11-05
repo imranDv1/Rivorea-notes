@@ -22,11 +22,7 @@ Given the title: "${title}"
 Instructions:
 - Write a clear, concise, helpful note based on the title.
 - Prefer plain text for explanations.
-- do not add code if user not ask for it , If user want to add code, include it inside fenced code blocks with the correct language, for example:
 
-\`\`\`javascript
-// code here
-\`\`\`
 
 - Do not repeat the title in the note.
 - Do NOT use step numbers or long explanations.

@@ -306,7 +306,54 @@ export function SimpleEditor({
       const custom = e as CustomEvent<{ text?: string }>;
       const value = custom.detail?.text?.toString();
       if (!value) return;
-      editor.chain().focus().insertContent(value).run();
+      // Ensure we are in edit mode and focus the editor
+      setEdit(true);
+      const codeRegex = /```([\w-]*)\n([\s\S]*?)```/g;
+      let lastIndex = 0;
+      const parts: Array<{
+        type: "text" | "code";
+        content: string;
+        lang?: string;
+      }> = [];
+      let match: RegExpExecArray | null;
+      while ((match = codeRegex.exec(value)) !== null) {
+        if (match.index > lastIndex) {
+          parts.push({
+            type: "text",
+            content: value.slice(lastIndex, match.index),
+          });
+        }
+        parts.push({
+          type: "code",
+          content: match[2].trimEnd(),
+          lang: match[1] || "text",
+        });
+        lastIndex = codeRegex.lastIndex;
+      }
+      if (lastIndex < value.length) {
+        parts.push({ type: "text", content: value.slice(lastIndex) });
+      }
+
+      const chain = editor.chain().focus();
+      for (const part of parts) {
+        if (part.type === "code") {
+          chain.insertContent({
+            type: "codeBlock",
+            attrs: { language: part.lang },
+            content: [{ type: "text", text: part.content }],
+          });
+        } else if (part.content.trim()) {
+          chain.insertContent(part.content);
+        }
+      }
+      chain.run();
+      // Scroll editor into view
+      try {
+        (editor.view.dom as HTMLElement).scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      } catch {}
       toast.success("Added to editor");
     };
     window.addEventListener(
