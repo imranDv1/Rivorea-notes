@@ -329,7 +329,7 @@ const CustomButton = () => {
           </button>
         </DialogTrigger>
 
-        <DialogContent className="max-w-3xl w-[95vw] h-[80vh] flex flex-col p-0 overflow-hidden rounded-2xl shadow-2xl dark:border-neutral-800 bg-white/90 dark:bg-neutral-950/90 backdrop-blur-md focus:outline-none focus-visible:outline-none">
+        <DialogContent className="max-w-6xl w-[95vw] h-[80vh] flex flex-col p-0 overflow-hidden rounded-2xl shadow-2xl dark:border-neutral-800 bg-white/90 dark:bg-neutral-950/90 backdrop-blur-md focus:outline-none focus-visible:outline-none">
           <DialogHeader className="sticky top-0 z-10 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-lg border-b dark:border-neutral-800 px-6 py-4">
             <DialogTitle className="text-lg flex items-center gap-3 font-semibold">
               <Image

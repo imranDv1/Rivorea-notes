@@ -1,14 +1,50 @@
-"use client"
+"use client";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "./ThemeToggle";
 import { usePathname } from "next/navigation";
+import { AnimatedThemeToggler } from "./ui/animated-theme-toggler";
+import * as React from "react";
+import { authClient } from "@/lib/auth-client";
 
 export function SiteHeader() {
-const fullpath = usePathname();
-const segments = fullpath.split('/dashboard'); 
-let path = segments[1] || ""; 
-path = path.charAt(0).toUpperCase() + path.slice(1); 
+  const fullpath = usePathname();
+  const segments = fullpath.split("/dashboard");
+  let path = segments[1] || "";
+  path = path.charAt(0).toUpperCase() + path.slice(1);
+
+  const { data: session } = authClient.useSession();
+  const userId = session?.user?.id;
+  const [noteTitle, setNoteTitle] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    // If we are at /dashboard/notes/[id], fetch note title
+    const match = fullpath.match(/\/dashboard\/notes\/([^\/]+)/);
+    const noteId = match?.[1];
+    if (!noteId || !userId) {
+      setNoteTitle(null);
+      return;
+    }
+    let aborted = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/notebody", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, noteId }),
+        });
+        const data = await res.json();
+        if (!aborted && data?.success) {
+          setNoteTitle(data.noteTitle || null);
+        }
+      } catch {
+        if (!aborted) setNoteTitle(null);
+      }
+    })();
+    return () => {
+      aborted = true;
+    };
+  }, [fullpath, userId]);
 
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
@@ -18,9 +54,11 @@ path = path.charAt(0).toUpperCase() + path.slice(1);
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        <h1 className="text-base font-medium text-muted-foreground" >...{path}</h1>
+        <h1 className="text-base font-medium text-muted-foreground">
+          {noteTitle ? noteTitle : `...${path}`}
+        </h1>
         <div className="ml-auto flex items-center gap-2">
-          <ThemeToggle />
+          <AnimatedThemeToggler />
         </div>
       </div>
     </header>
