@@ -64,9 +64,12 @@ function MessageBubble({
       const code = match[1].trim();
       let language = "javascript";
       if (/python/i.test(code)) language = "python";
-      else if (/function|console\.log|let |const |var /.test(code)) language = "javascript";
-      else if (/CREATE TABLE|SELECT |INSERT |UPDATE |DELETE /.test(code)) language = "sql";
-      else if (/<!DOCTYPE html>|<html>|<div|<\/div>/.test(code)) language = "html";
+      else if (/function|console\.log|let |const |var /.test(code))
+        language = "javascript";
+      else if (/CREATE TABLE|SELECT |INSERT |UPDATE |DELETE /.test(code))
+        language = "sql";
+      else if (/<!DOCTYPE html>|<html>|<div|<\/div>/.test(code))
+        language = "html";
       else if (/^#include |int main\s*\(/.test(code)) language = "cpp";
 
       parts.push(
@@ -102,7 +105,9 @@ function MessageBubble({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: isAi ? -10 : 10 }}
       transition={{ duration: 0.25 }}
-      className={`flex items-end gap-3 group ${isAi ? "flex-row" : "flex-row-reverse"}`}
+      className={`flex items-end gap-3 group ${
+        isAi ? "flex-row" : "flex-row-reverse"
+      }`}
     >
       <Image
         src={msg.avatar}
@@ -111,7 +116,11 @@ function MessageBubble({
         height={38}
         className="rounded-full object-cover w-9 h-9 border border-gray-200 dark:border-neutral-700"
       />
-      <div className={`max-w-[80vw] md:max-w-lg flex flex-col ${isAi ? "" : "items-end"}`}>
+      <div
+        className={`max-w-[80vw] md:max-w-lg flex flex-col ${
+          isAi ? "" : "items-end"
+        }`}
+      >
         <span
           className={`font-medium text-xs mb-1 select-none ${
             isAi ? "text-gray-700 dark:text-neutral-300" : "text-primary"
@@ -129,15 +138,32 @@ function MessageBubble({
         >
           {renderContent(msg.text)}
           {isAi && (
-            <button
-              onClick={() => onCopy && onCopy(msg.text)}
-              className="absolute top-2 right-3 text-xs text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-white/70 dark:bg-neutral-800/80 px-1.5 py-0.5 rounded opacity-0 group-hover/chat:opacity-100 transition-opacity flex items-center gap-1"
-              tabIndex={-1}
-              title="Copy response"
-            >
-              <Copy size={14} />
-              Copy
-            </button>
+            <div className="absolute top-2 right-3 flex items-center gap-2 opacity-0 group-hover/chat:opacity-100 transition-opacity">
+              <button
+                onClick={() => onCopy && onCopy(msg.text)}
+                className="text-xs text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-white/70 dark:bg-neutral-800/80 px-1.5 py-0.5 rounded flex items-center gap-1"
+                tabIndex={-1}
+                title="Copy response"
+              >
+                <Copy size={14} />
+                Copy
+              </button>
+              <button
+                onClick={() => {
+                  try {
+                    const event = new CustomEvent("rivorea-insert-note", {
+                      detail: { text: msg.text },
+                    });
+                    window.dispatchEvent(event);
+                  } catch {}
+                }}
+                className="text-xs text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-white/70 dark:bg-neutral-800/80 px-1.5 py-0.5 rounded"
+                tabIndex={-1}
+                title="Write to editor"
+              >
+                Write
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -376,7 +402,11 @@ const CustomButton = () => {
                 loading || !title.trim() ? "cursor-not-allowed" : ""
               }`}
             >
-              {loading ? <Loader2 className="animate-spin" size={18} /> : "Send"}
+              {loading ? (
+                <Loader2 className="animate-spin" size={18} />
+              ) : (
+                "Send"
+              )}
             </Button>
           </form>
         </DialogContent>

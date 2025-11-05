@@ -84,7 +84,7 @@ export default function FeaturesSection2() {
                         </span>
 
                         <p className="my-8 text-2xl font-semibold">
-                            Track your note-taking history — see edits, backups, and exports in real time. <span className="text-muted-foreground">Stay on top of your knowledge journey, every day.</span>
+                            Track your note-taking history — see edits, <br className='flex md:hidden'/> backups,and exports <br className='flex md:hidden'/> in real time. 
                         </p>
                     </div>
                     <MonitoringChart />

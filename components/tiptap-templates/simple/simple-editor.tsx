@@ -98,7 +98,6 @@ const MainToolbarContent = ({
 }) => {
   const imageUploadRef = React.useRef<any>(null);
 
-
   return (
     <>
       <Spacer />
@@ -225,18 +224,18 @@ export function SimpleEditor({
   const editor = useEditor({
     immediatelyRender: false,
     shouldRerenderOnTransaction: false,
-    editable: edit, 
-   content: (() => {
-  if (!content) return "";
-  if (typeof content === "string")
-    // Convert Markdown headings (#, ##, ###, ...) to HTML <h1>-<h6> before passing to TipTap
-    return convertMarkdownHeadingsToHtml(content);
-  try {
-    return content as JSONContent;
-  } catch {
-    return "";
-  }
-})(),
+    editable: edit,
+    content: (() => {
+      if (!content) return "";
+      if (typeof content === "string")
+        // Convert Markdown headings (#, ##, ###, ...) to HTML <h1>-<h6> before passing to TipTap
+        return convertMarkdownHeadingsToHtml(content);
+      try {
+        return content as JSONContent;
+      } catch {
+        return "";
+      }
+    })(),
     editorProps: {
       attributes: {
         class: "simple-editor",
@@ -297,6 +296,28 @@ export function SimpleEditor({
 
     return () => {
       editor.off("transaction", checkMaxContent);
+    };
+  }, [editor]);
+
+  // Listen for insert requests from the AI dialog and insert at cursor
+  React.useEffect(() => {
+    if (!editor) return;
+    const handleInsert = (e: Event) => {
+      const custom = e as CustomEvent<{ text?: string }>;
+      const value = custom.detail?.text?.toString();
+      if (!value) return;
+      editor.chain().focus().insertContent(value).run();
+      toast.success("Added to editor");
+    };
+    window.addEventListener(
+      "rivorea-insert-note",
+      handleInsert as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        "rivorea-insert-note",
+        handleInsert as EventListener
+      );
     };
   }, [editor]);
 
@@ -412,7 +433,6 @@ export function SimpleEditor({
             <span></span>
             {/* the ai button open dialog 👇 */}
             <CustomButton />
-
 
             <ShadcnButton disabled={SaveLoading} size="sm" onClick={handleSave}>
               {SaveLoading ? (

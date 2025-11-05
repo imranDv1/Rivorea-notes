@@ -12,7 +12,7 @@ export default function ContentSection() {
                     <div className="relative mb-6 sm:mb-0">
                         <div className="bg-linear-to-b aspect-76/59 relative rounded-2xl from-zinc-300 to-transparent p-px dark:from-zinc-700">
                             <Image src="/Images/bg.jpeg" className="hidden rounded-[15px] dark:block max-h-[400px] object-cover " alt="rivorea notes dark illustration" width={1207} height={929} />
-                            <Image src="/payments-light.png" className="rounded-[15px] shadow dark:hidden" alt="rivorea notes light illustration" width={1207} height={929} />
+                            <Image src="/Images/bg.jpeg"  className=" rounded-[15px] dark:hidden  max-h-[400px] object-cover " alt="rivorea notes light illustration" width={1207} height={929} />
                         </div>
                     </div>
 
@@ -33,7 +33,7 @@ export default function ContentSection() {
 
                                 <div className="mt-6 space-y-3">
                                     <cite className="block font-medium">Ahmed abdi, Writer</cite>
-                                    <Image className="h-5 w-fit dark:invert" src="https://html.tailus.io/blocks/customers/nvidia.svg" alt="Nvidia Logo" height={100} width={100} />
+                                <p>@Ahmed abdi </p>
                                 </div>
                             </blockquote>
                         </div>

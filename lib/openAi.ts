@@ -17,16 +17,20 @@ export async function generateNoteBody(title: string): Promise<string> {
   try {
     const prompt = `
 You are NoteBuddy, an AI assistant for the Rivorea Note app.
-Given the title: "${title} if the user want code but the code in code block if there is code need to be written"
+Given the title: "${title}"
 
 Instructions:
 - Write a clear, concise, helpful note based on the title.
-- Respond in simple plain text, no Markdown formatting or special characters (like *, #, _, etc).
+- Prefer plain text for explanations.
+- do not add code if user not ask for it , If user want to add code, include it inside fenced code blocks with the correct language, for example:
+
+\`\`\`javascript
+// code here
+\`\`\`
+
 - Do not repeat the title in the note.
 - Do NOT use step numbers or long explanations.
-.
-- Keep everything short, practical, and easy to read in a basic editor.
-- if there is code but it in code block i am using react-syntax-highlighter
+- Keep everything short, practical, and easy to read.
 `;
 
     const response = await openai.chat.completions.create({
@@ -38,7 +42,8 @@ Instructions:
       max_tokens: 800,
     });
 
-    const text = response.choices?.[0]?.message?.content || "Could not generate note";
+    const text =
+      response.choices?.[0]?.message?.content || "Could not generate note";
     return text.trim();
   } catch (error) {
     console.error("❌ Error in generateNoteBody:", error);
