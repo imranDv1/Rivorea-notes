@@ -290,6 +290,14 @@ const CreateNotesPage = ({ notes }: CreateNotesProps) => {
   };
 
   const handleEditSubmit = async (values: z.infer<typeof formSchema>) => {
+    const newTag = inputValue.trim();
+    if (newTag && tags.length < maxTags && !tags.includes(newTag)) {
+      const updatedTags = [...tags, newTag];
+      setTags(updatedTags);
+      values.category = updatedTags; // Update form values directly
+      setInputValue(""); // Clear input after adding
+    }
+
     const data = {
       title: values.title,
       description: values.description,
