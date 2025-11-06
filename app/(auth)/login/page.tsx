@@ -9,19 +9,7 @@ const Login = () => {
       <Ripple />
 
       <LoginPage />
-      <div className="mt-4 flex flex-col items-center justify-center gap-2 md:flex-row">
-        <p className="text-sm text-gray-500">
-          <Link href="/privacy" className="text-blue-500 hover:underline">
-            Privacy Policy
-          </Link>
-        </p>
-        <span className="hidden text-gray-500 md:block">•</span>
-        <p className="text-sm text-gray-500">
-          <Link href="/terms" className="text-blue-500 hover:underline">
-            Terms of Service
-          </Link>
-        </p>
-      </div>
+
     </div>
   );
 };
