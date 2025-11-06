@@ -1,8 +1,9 @@
-import ContentSection from "@/components/content-1";
+import Features10 from "@/components/features-10";
 import FeaturesSection from "@/components/features-8";
 import FeaturesSection2 from "@/components/features-9";
 import FooterSection from "@/components/footer";
 import HeroSection from "@/components/hero-section";
+import LogoCloud from "@/components/logo-cloud";
 import Pricing from "@/components/pricing";
 import { GlowingEffectDemoSecond } from "@/components/soloution";
 import { auth } from "@/lib/auth";
@@ -30,6 +31,7 @@ export default async function Home() {
   return (
     <div>
       <HeroSection />
+      <LogoCloud/>
       <div className="w-[95%] lg:w-[80%] mx-auto flex flex-col gap-5 mt-15">
       <h1 className=" text-3xl lg:text-5xl font-bold text-center mt-8 mb-2">
           Capture, Organize, and Find Your Notes Effortlessly
@@ -39,7 +41,17 @@ export default async function Home() {
         </p>
         <FeaturesSection />
       </div>
-      <ContentSection/>
+
+      <div className="w-[95%] lg:w-[80%] mx-auto flex flex-col gap-5 mt-16 mb-2">
+        <h2 className="text-3xl lg:text-5xl font-bold text-center mt-8 mb-2">
+          Why Choose Rivorea Notes?
+        </h2>
+        <p className="text-lg text-muted-foreground text-center max-w-2xl mx-auto">
+          Supercharge your productivity with powerful search, seamless syncing, and an effortless experience—everything you need, always at your fingertips.
+        </p>
+      </div>
+      <Features10 />
+      
       <div className="w-[95%] lg:w-[80%] mx-auto flex flex-col gap-3">
         <h1 className=" text-3xl lg:text-5xl font-bold text-center mt-8 mb-2">
           Effortless Sync, Exceptional Security

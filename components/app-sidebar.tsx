@@ -123,11 +123,7 @@ const data = {
       url: "#",
       icon: IconHelp,
     },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-    },
+ 
   ],
   documents: [
     {

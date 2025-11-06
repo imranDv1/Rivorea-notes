@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useEffect, useState } from "react"
 import { useFavNotificationStore } from "@/context/updateFavorite"
+import Link from "next/link"
 
 export function NavDocuments({
   userId,
@@ -41,8 +42,8 @@ export function NavDocuments({
     fetchFavorites()
   }, [userId, refreshSignal])
 
-  // Take only the latest 4 favorites
-  const latestFavorites = favorites.slice(-4).reverse() // reverse to show newest first
+  // Take only the latest 4 favorites to show in sidebar, newest first
+  const latestFavorites = favorites.slice(-4).reverse()
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -59,9 +60,15 @@ export function NavDocuments({
         ))}
 
         <SidebarMenuItem>
-          <SidebarMenuButton className="text-sidebar-foreground/70">
-            <IconDots className="text-sidebar-foreground/70" />
-            <span>More</span>
+          <SidebarMenuButton asChild className="text-sidebar-foreground/70">
+            {/* Link to a dedicated favorites page */}
+            <Link
+              href="/dashboard/favorites"
+              className="flex items-center gap-2 text-sidebar-foreground/70"
+            >
+              <IconDots className="text-sidebar-foreground/70" />
+              <span>More</span>
+            </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

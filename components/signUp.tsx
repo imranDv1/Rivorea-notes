@@ -76,7 +76,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <section className="flex  w-full bg-zinc-50 px-4 py-16 md:py-32 dark:bg-transparent">
+    <section className="flex  w-full bg-background px-4 py-16 md:py-32">
       <div className="max-w-92 m-auto h-fit w-full ">
         <div className="p-6">
           <div>
@@ -96,7 +96,7 @@ export default function SignUpPage() {
             <Button
               type="button"
               variant="outline"
-              className="w-full"
+              className="w-full cursor-pointer"
               onClick={SignInWithGoogle}
             >
               {googlePending ? (
@@ -199,7 +199,8 @@ export default function SignUpPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full" disabled={Loading}>
+                <Button type="submit" className="w-full cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow-md border-[0.5px] border-white/25 shadow-black/20 [&_svg]:drop-shadow-sm not-in-data-[theme=dark]:text-shadow-sm bg-primary ring-1 ring-(--ring-color) [--ring-color:color-mix(in_oklab,var(--color-foreground)15%,var(--color-primary))] text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2" disabled={Loading}>
+              
                   {Loading ? (
                     <>
                       <Loader2 className="size-4 animate-spin" />

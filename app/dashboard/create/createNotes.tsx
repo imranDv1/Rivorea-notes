@@ -157,6 +157,15 @@ const CreateNotesPage = ({ notes }: CreateNotesProps) => {
   };
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
+
+    const newTag = inputValue.trim();
+    if (newTag && tags.length < maxTags && !tags.includes(newTag)) {
+      const updatedTags = [...tags, newTag];
+      setTags(updatedTags);
+      values.category = updatedTags; // Update form values directly
+      setInputValue(""); // Clear input after adding
+    }
+
     const data = { ...values, userId };
     const result = await CreateNote(data);
 
@@ -727,87 +736,101 @@ const CreateNotesPage = ({ notes }: CreateNotesProps) => {
         {!isSearching &&
           !hasSearched &&
           !hasCategorySearched &&
-          notes.map((note) => (
-            <Card key={note.id}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>{note.title}</CardTitle>
+          (notes.length > 0 ? (
+            notes.map((note) => (
+              <Card key={note.id}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>{note.title}</CardTitle>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="p-0 hover:cursor-pointer"
+                          disabled={favoriteLoading[note.id]}
+                          onClick={() => handleFavoriteToggle(note.id)}
+                        >
+                          {favoriteLoading[note.id] ? (
+                            <Loader2 className="animate-spin size-4" />
+                          ) : (
+                            <Star
+                              className="size-4"
+                              fill={favoriteStatus[note.id] ? "gold" : "none"}
+                              color={favoriteStatus[note.id] ? "gold" : "gray"}
+                            />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          {favoriteStatus[note.id]
+                            ? "Remove from Favorite"
+                            : "Add to Favorite"}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                  <CardDescription>{note.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex gap-2">
+                  {note.category.map((tag, index) => (
+                    <Badge
+                      variant="outline"
+                      className="p-2 cursor-pointer"
+                      key={`${note.id}-${index}`}
+                      onClick={() => handleCategorySearch(tag)}
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={`notes/${note.id}`}
+                      className={buttonVariants()}
+                    >
+                      View
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      className="hover:cursor-pointer"
+                      onClick={() => handleEditClick(note)}
+                    >
+                      Edit
+                    </Button>
+                  </div>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
-                        variant="ghost"
-                        className="p-0 hover:cursor-pointer"
-                        disabled={favoriteLoading[note.id]}
-                        onClick={() => handleFavoriteToggle(note.id)}
+                        variant="outline"
+                        onClick={() => handleDeleteClick(note.id)}
+                        disabled={deleteLoading === note.id}
+                        className="hover:cursor-pointer"
                       >
-                        {favoriteLoading[note.id] ? (
-                          <Loader2 className="animate-spin size-4" />
+                        {deleteLoading === note.id ? (
+                          <Loader2 className="animate-spin" />
                         ) : (
-                          <Star
-                            className="size-4"
-                            fill={favoriteStatus[note.id] ? "gold" : "none"}
-                            color={favoriteStatus[note.id] ? "gold" : "gray"}
-                          />
+                          <Trash2 />
                         )}
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>
-                        {favoriteStatus[note.id]
-                          ? "Remove from Favorite"
-                          : "Add to Favorite"}
-                      </p>
+                      <p>Delete the notes</p>
                     </TooltipContent>
                   </Tooltip>
-                </div>
-                <CardDescription>{note.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex gap-2">
-                {note.category.map((tag, index) => (
-                  <Badge
-                    variant="outline"
-                    className="p-2 cursor-pointer"
-                    key={`${note.id}-${index}`}
-                    onClick={() => handleCategorySearch(tag)}
-                  >
-                    {tag}
-                  </Badge>
-                ))}
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <div className="flex items-center gap-2">
-                  <Link href={`notes/${note.id}`} className={buttonVariants()}>
-                    View
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    className="hover:cursor-pointer"
-                    onClick={() => handleEditClick(note)}
-                  >
-                    Edit
-                  </Button>
-                </div>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      onClick={() => handleDeleteClick(note.id)}
-                      disabled={deleteLoading === note.id}
-                      className="hover:cursor-pointer"
-                    >
-                      {deleteLoading === note.id ? (
-                        <Loader2 className="animate-spin" />
-                      ) : (
-                        <Trash2 />
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Delete the notes</p>
-                  </TooltipContent>
-                </Tooltip>
-              </CardFooter>
-            </Card>
+                </CardFooter>
+              </Card>
+            ))
+          ) : (
+            <div className="col-span-full flex flex-col items-center justify-center p-10">
+              <p className="text-gray-400 text-lg mb-4">
+                No notes found. Create your first note!
+              </p>
+              <Button onClick={openDialog}>
+                <FilePlus2 className="mr-2" /> Create First Note
+              </Button>
+            </div>
           ))}
       </div>
 

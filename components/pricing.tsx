@@ -14,9 +14,34 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/tiptap-utils";
 
+const FREE_FEATURES = [
+  "Unlimited notes",
+  "Rich text formatting (bold, italics, headings, checklists, and more)",
+  "Organize notes with folders & tags",
+  "Instant search within your notes",
+  "Cross-device sync (up to 2 devices)",
+  "Basic image upload per note",
+  "Export your notes (Markdown, PDF)",
+  "Secure & private by default",
+];
+
+const PRO_FEATURES = [
+  "Everything in Free plan",
+  "Unlimited device sync",
+  "AI-powered note writer & smart suggestions",
+  "Advanced search (semantic/AI search, filters)",
+  "Upload more images per note (up to 10/images per note)",
+  "Note version history & recovery",
+  "Priority support via email/Discord",
+  "Early access to new features",
+  "Larger individual note size limit",
+  "Advanced organization: nested folders, custom tags",
+  "Custom note themes & appearance",
+];
+
 export default function PricingClient({
   userId,
-  hasSubscription, // ✅ أرسلها من السيرفر
+  hasSubscription,
 }: {
   userId?: string;
   hasSubscription?: boolean;
@@ -25,7 +50,7 @@ export default function PricingClient({
   const [loading, setLoading] = useState(false);
 
   const handleProSubscribe = async () => {
-    if (hasSubscription) return; // ✅ حتى لو حاول يضغط من الـ devtools ما ينفذ شيء
+    if (hasSubscription) return;
 
     if (!userId || userId === "") {
       router.push("/login");
@@ -62,19 +87,19 @@ export default function PricingClient({
             Pricing that Scales with You
           </h1>
           <p>
-            Gemini is evolving to be more than just the models. It supports an
-            entire set of APIs and platforms helping developers and businesses
-            innovate.
+            Our plans are simple. Start for free, or unlock even more possibilities with Pro. <br />
+            Designed for note-takers, thinkers, teams, and creators.
           </p>
         </div>
 
         <div className="mt-8 grid gap-6 md:mt-20 md:grid-cols-2">
+
           {/* Free Card */}
           <Card>
             <CardHeader>
               <CardTitle className="font-medium">Free</CardTitle>
               <span className="my-3 block text-2xl font-semibold">$0 / mo</span>
-              <CardDescription className="text-sm">Per editor</CardDescription>
+              <CardDescription className="text-sm">For individuals</CardDescription>
               <Button asChild variant="outline" className="mt-4 w-full">
                 <Link href="/dashboard">Get Started</Link>
               </Button>
@@ -82,14 +107,12 @@ export default function PricingClient({
             <CardContent className="space-y-4">
               <hr className="border-dashed" />
               <ul className="list-outside space-y-3 text-sm">
-                {["Note taking", "Highliy customizeble note "].map(
-                  (item, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <Check className="size-3" />
-                      {item}
-                    </li>
-                  )
-                )}
+                {FREE_FEATURES.map((item, index) => (
+                  <li key={index} className="flex items-center gap-2">
+                    <Check className="size-3 text-primary" />
+                    {item}
+                  </li>
+                ))}
               </ul>
             </CardContent>
           </Card>
@@ -105,8 +128,7 @@ export default function PricingClient({
             <CardHeader>
               <CardTitle className="font-medium">Pro</CardTitle>
               <span className="my-3 block text-2xl font-semibold">$9 / mo</span>
-              <CardDescription className="text-sm">Per editor</CardDescription>
-
+              <CardDescription className="text-sm">For power users</CardDescription>
               {hasSubscription ? (
                 <Button
                   variant="outline"
@@ -125,19 +147,12 @@ export default function PricingClient({
                 </Button>
               )}
             </CardHeader>
-
             <CardContent className="space-y-4">
               <hr className="border-dashed" />
               <ul className="list-outside space-y-3 text-sm">
-                {[
-                  "Everything in Free Plan",
-                  "Ai note writer",
-                  "More long note typing",
-                  "More uploading image per note",
-                  "Standard Security Features",
-                ].map((item, index) => (
+                {PRO_FEATURES.map((item, index) => (
                   <li key={index} className="flex items-center gap-2">
-                    <Check className="size-3" />
+                    <Check className="size-3 text-primary" />
                     {item}
                   </li>
                 ))}

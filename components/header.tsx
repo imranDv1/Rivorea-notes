@@ -82,9 +82,10 @@ export const HeroHeader = () => {
                                 </ul>
                             </div>
                             <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
+                            <AnimatedThemeToggler />
                            {sessiom ? (
                            <>
-                         <AnimatedThemeToggler />
+                        
                             <UserDropdown email={sessiom.user.email} image={`${sessiom.user.image}`} name={sessiom.user.name} />
                            </>
                            ): (
