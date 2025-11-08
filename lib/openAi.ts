@@ -6,6 +6,7 @@ if (!process.env.OPENAI_API_KEY) {
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+
 });
 
 /**
@@ -25,8 +26,7 @@ Instructions:
 
 
 - Do not repeat the title in the note.
-- Do NOT use step numbers or long explanations.
-- Keep everything short, practical, and easy to read.
+- Keep everything easy to read and clear and maybe long if user wants.
 `;
 
     const response = await openai.chat.completions.create({
