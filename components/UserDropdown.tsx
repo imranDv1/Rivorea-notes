@@ -50,7 +50,7 @@ export function UserDropdown({ email, name, image,  }: iAppProps) {
       <DropdownMenuTrigger  asChild>
         <div className="flex items-center gap-2 cursor-pointer select-none">
           <Avatar>
-            <AvatarImage src={`${image}`} alt="Profile image" />
+            <AvatarImage src={`${image}`} alt="Profile image" className='object-cover' />
             <AvatarFallback>{name[0].toUpperCase()}</AvatarFallback>
           </Avatar>
           <ChevronDownIcon size={16} className="opacity-60" />
