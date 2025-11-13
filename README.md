@@ -1,5 +1,7 @@
 # Rivorea-notes
 
+![Rivorea Notes Preview](./Images/Rivorea%20Post.jpg)
+
 > Note taker app powered by AI — clean, fast, and built with Next.js + TypeScript.
 
 [Live demo](https://rivorea-notes.vercel.app) • **TypeScript** • **Next.js** • **Prisma**
@@ -8,152 +10,152 @@
 
 ## 🎯 What is Rivorea-notes?
 
-Rivorea-notes is a modern note-taking web app enhanced with AI features. It focuses on a minimal, distraction-free UI with powerful capabilities under the hood — fast developer DX (TypeScript + Next.js) and a production-ready stack (Prisma, Vercel). Use it to capture, summarize, and manage notes intelligently.
+Rivorea-notes is a modern AI-powered note-taking application built with **Next.js** and **TypeScript**. It provides a clean and minimal user experience while leveraging modern web technologies for performance, scalability, and developer productivity.
 
 ---
 
-## ✨ Key features
+## ✨ Key Features
 
-* Create, edit, and delete notes with a sleek UI
-* AI-powered helpers: summarize, tag, or extract important points from notes
-* User authentication and per-user note storage (Prisma + your database)
-* Responsive design — works on desktop and mobile
-* Ready to deploy on Vercel
-
-> *Note:* features listed above reflect the repository layout and typical responsibilities of the included packages (Next.js + Prisma). If you want, I can tailor the README to the exact implemented features after you tell me which AI functions and auth methods are present.
-
----
-
-## 🧰 Tech stack
-
-* **Next.js (App Router)** with TypeScript
-* **Prisma** (ORM) for database access
-* **SCSS / CSS Modules** for styling
-* Optional: Vercel for hosting
+* ✍️ Create, edit, and delete notes with ease
+* 🤖 AI-powered enhancements for summarizing and tagging notes
+* 🔐 Secure authentication system (Google Auth & BetterAuth)
+* ☁️ Cloud image uploads via Cloudinary
+* 💳 Stripe integration for premium features or subscriptions
+* 📱 Fully responsive design
+* 🚀 Optimized for Vercel deployment
 
 ---
 
-## 🚀 Quick start (local)
+## 🧰 Tech Stack
 
-> The repo uses standard Next.js commands. Choose the package manager you prefer (npm / pnpm / yarn).
+* **Next.js (App Router)** + **TypeScript**
+* **Prisma** ORM
+* **BetterAuth** for authentication
+* **Cloudinary** for image storage
+* **Stripe** for payments
+* **OpenAI API** for AI-powered notes
+* **PostgreSQL** database
+* **Deployed on Vercel**
 
-1. Clone the repo
+---
+
+## 🚀 Quick Start (Local Development)
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/imranDv1/Rivorea-notes.git
 cd Rivorea-notes
 ```
 
-2. Install dependencies
+### 2. Install dependencies
 
 ```bash
-# npm
 npm install
-# or pnpm
+# or
 pnpm install
-# or yarn
+# or
 yarn install
 ```
 
-3. Create a `.env` file in the project root and add required environment variables (see next section).
+### 3. Set up your `.env` file
 
-4. Prepare Prisma (if Prisma is used and you have a database):
+Create a `.env` file in the project root and add the following variables:
+
+```env
+# Database
+DATABASE_URL="postgresql://user:password@host:port/dbname"
+
+# Encryption
+PASSWORD_ENCRYPTION_KEY="your-password-encryption-key"
+ENCRYPTION_KEY="your-encryption-key"
+
+# Authentication
+BETTER_AUTH_URL="your-auth-url"
+BETTER_AUTH_SECRET="your-auth-secret"
+GOOGLE_CLIENT_ID_WEB="your-google-client-id-web"
+GOOGLE_CLIENT_ID_ANDROID="your-google-client-id-android"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME="your-cloud-name"
+CLOUDINARY_API_KEY="your-api-key"
+CLOUDINARY_API_SECRET="your-api-secret"
+
+# Stripe
+STRIPE_SECRET_KEY="your-stripe-secret-key"
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="your-stripe-publishable-key"
+
+# OpenAI
+OPENAI_API_KEY="your-openai-api-key"
+
+# App URL
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+```
+
+> ⚠️ Make sure to fill in the actual credentials for your environment.
+
+### 4. Set up Prisma
 
 ```bash
 npx prisma generate
-npx prisma db push    # or `npx prisma migrate dev` if you use migrations
+npx prisma db push
 ```
 
-5. Run the dev server
+### 5. Run the development server
 
 ```bash
 npm run dev
-# or pnpm dev
-pnpm dev
-# or yarn dev
-yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the app.
+Visit [http://localhost:3000](http://localhost:3000) to view the app.
 
 ---
 
-## 🔑 Environment variables
-
-Create a `.env` file and add environment variables your setup needs. Typical variables for this kind of project include:
-
-```
-DATABASE_URL="postgresql://user:password@host:port/dbname"
-# If the app integrates with OpenAI or another AI provider:
-OPENAI_API_KEY="sk-..."
-# NextAuth or any auth provider callbacks
-NEXTAUTH_URL="http://localhost:3000"
-# Any other third-party keys your app uses
-```
-
-> Adjust names to match the variables used by the project. If you want, I can search the repo and fill exact variable names.
-
----
-
-## 📦 Build & production
+## 📦 Build & Production
 
 ```bash
-# build
 npm run build
-# start
 npm run start
 ```
 
-Deploy to Vercel by connecting your GitHub repo and providing the same environment variables in the Vercel dashboard.
+Deploy directly to **Vercel** — just connect your GitHub repository and add the same environment variables in the Vercel dashboard.
 
 ---
 
-## 🧪 Tests
+## 🧪 Testing
 
-If you have tests in the repo, list how to run them here, e.g. `npm test`.
+If tests are included, run them with:
+
+```bash
+npm test
+```
 
 ---
 
 ## ♻️ Contributing
 
-Contributions are welcome! A simple workflow:
+Contributions are always welcome!
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feat/awesome`
-3. Make your changes and add tests if applicable
-4. Open a Pull Request describing the change
-
-Please follow existing code style and keep commits small and focused.
-
----
-
-## 📸 Screenshots
-
-*Add a screenshot or GIF here to show the UI.*
+1. Fork the repo
+2. Create your feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request 🎉
 
 ---
 
-## 📝 License
 
-Specify a license (e.g. MIT) or keep it private. Example:
 
-```
-MIT License
-```
 
----
 
-## 🙏 Credits & links
+## 🙏 Credits
 
-* Project repo: `https://github.com/imranDv1/Rivorea-notes`
-* Demo: `https://rivorea-notes.vercel.app`
+Developed by [Imran Ahmed](https://github.com/imranDv1)
+
+* GitHub: [Rivorea-notes](https://github.com/imranDv1/Rivorea-notes)
+* Live Demo: [rivorea-notes.vercel.app](https://rivorea-notes.vercel.app)
 
 ---
 
-If you want, I can:
-
-* Update this README with exact environment variables and features by scanning the repo for implemented files (auth, OpenAI integration, Prisma schema).
-* Create a shorter `README_short.md` for your project home page.
-* Add badges (build, license, deploy) and a screenshot/gif ready for the repo.
-
-Tell me which of these you'd like and I’ll update the README accordingly.
+✨ *"Rivorea-notes — Capture, organize, and think better."*
