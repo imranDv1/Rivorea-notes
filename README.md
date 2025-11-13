@@ -1,6 +1,6 @@
 # Rivorea-notes
 
-https://res.cloudinary.com/dfyafxdwe/image/upload/v1762937469/Image_1_evlya2.jpg
+![Rivorea Notes Preview](https://res.cloudinary.com/dfyafxdwe/image/upload/v1762937469/Image_1_evlya2.jpg)
 
 > Note taker app powered by AI — clean, fast, and built with Next.js + TypeScript.
 
@@ -145,7 +145,9 @@ Contributions are always welcome!
 
 ---
 
+## 📸 Screenshots
 
+*Add screenshots or demo GIFs of the app here.*
 
 
 
