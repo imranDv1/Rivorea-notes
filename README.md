@@ -33,7 +33,6 @@ Rivorea-notes is a modern AI-powered note-taking application built with **Next.j
 * **BetterAuth** for authentication
 * **Cloudinary** for image storage
 * **Stripe** for payments
-* **OpenAI API** for AI-powered notes
 * **PostgreSQL** database
 * **Deployed on Vercel**
 
@@ -66,15 +65,9 @@ Create a `.env` file in the project root and add the following variables:
 # Database
 DATABASE_URL="postgresql://user:password@host:port/dbname"
 
-# Encryption
-PASSWORD_ENCRYPTION_KEY="your-password-encryption-key"
-ENCRYPTION_KEY="your-encryption-key"
-
 # Authentication
 BETTER_AUTH_URL="your-auth-url"
 BETTER_AUTH_SECRET="your-auth-secret"
-GOOGLE_CLIENT_ID_WEB="your-google-client-id-web"
-GOOGLE_CLIENT_ID_ANDROID="your-google-client-id-android"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
 # Cloudinary
@@ -84,10 +77,6 @@ CLOUDINARY_API_SECRET="your-api-secret"
 
 # Stripe
 STRIPE_SECRET_KEY="your-stripe-secret-key"
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="your-stripe-publishable-key"
-
-# OpenAI
-OPENAI_API_KEY="your-openai-api-key"
 
 # App URL
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
@@ -145,9 +134,11 @@ Contributions are always welcome!
 
 ---
 
-## 📸 Screenshots
+## 📸 Screenshot
 
-*Add screenshots or demo GIFs of the app here.*
+![Rivorea Screenshot](https://res.cloudinary.com/dfyafxdwe/image/upload/v1762939179/Rivorea_Post_Copy_rujrkg.jpg)
+
+---
 
 
 
