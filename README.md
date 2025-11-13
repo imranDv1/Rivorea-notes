@@ -1,6 +1,6 @@
 # Rivorea-notes
 
-![Rivorea Notes Preview](./Images/Rivorea%20Post.jpg)
+![Rivorea Notes Preview](./Images/Rivorea Post.jpg)
 
 > Note taker app powered by AI — clean, fast, and built with Next.js + TypeScript.
 
