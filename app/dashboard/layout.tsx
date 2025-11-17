@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="floating" />
       <SidebarInset>
         <SiteHeader />
         <div className="w-full max-w-[77rem] mx-auto px-4">

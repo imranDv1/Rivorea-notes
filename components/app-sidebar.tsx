@@ -58,11 +58,7 @@ const data = {
       icon: FileKey2,
       badge: "new",
     },
-    {
-      title: "Workspaces",
-      url: "#",
-      icon: IconFolder,
-    },
+
   ],
   navClouds: [
     {
@@ -115,14 +111,10 @@ const data = {
   navSecondary: [
     {
       title: "Settings",
-      url: "#",
+      url: "/dashboard/setting",
       icon: IconSettings,
     },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: IconHelp,
-    },
+
  
   ],
   documents: [

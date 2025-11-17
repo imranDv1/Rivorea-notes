@@ -1,8 +1,9 @@
+'use client'
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, ChevronRight } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import { TextEffect } from "@/components/ui/text-effect";
 import { AnimatedGroup } from "@/components/ui/animated-group";
@@ -10,6 +11,7 @@ import { HeroHeader } from "./header";
 import type { Variants } from "framer-motion";
 
 import { BorderBeam } from "./ui/border-beam";
+import { authClient } from "@/lib/auth-client";
 
 
 // Variants for AnimatedGroup items
@@ -42,6 +44,7 @@ const containerVariants: Variants = {
 };
 
 export default function HeroSection() {
+  const { data: sessiom } = authClient.useSession();
   return (
     <>
       <HeroHeader />
@@ -135,6 +138,15 @@ export default function HeroSection() {
 
               </div>
             </div>
+
+  {sessiom ? (
+    <div className="flex items-center mt-4 justify-center gap-4">
+      <Link href="/dashboard" className={buttonVariants({ variant: "default" })}> continue to Dashboard</Link>
+      <Link href="https://x.com/imrandv1" target="_blank" className={buttonVariants({ variant: "secondary" })}>Follow me on X</Link>
+    </div>
+  ) : 
+  null
+  }
 
             <AnimatedGroup
               variants={{ container: containerVariants, item: itemVariants }}

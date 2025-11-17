@@ -42,14 +42,7 @@ export function NavMain({
                 <span>Create Note</span>
               </Link>
             </SidebarMenuButton>
-            <Button
-              size="icon"
-              className="size-8 group-data-[collapsible=icon]:opacity-0"
-              variant="outline"
-            >
-              <IconMail />
-              <span className="sr-only">Inbox</span>
-            </Button>
+     
           </SidebarMenuItem>
         </SidebarMenu>
 
