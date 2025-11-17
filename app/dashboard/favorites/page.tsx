@@ -72,9 +72,11 @@ const FavoritesPage = () => {
 
         const data = await res.json();
         setFavorites(data);
-      } catch (err: any) {
+      } catch (err) {
         console.error("Error fetching favorites:", err);
-        toast.error(err.message || "Failed to load favorites");
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to load favorites";
+        toast.error(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -102,8 +104,10 @@ const FavoritesPage = () => {
       setFavorites((prev) => prev.filter((fav) => fav.noteId !== noteId));
       toast.success("Removed from favorites!");
       triggerFavRefresh();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to remove favorite");
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to remove favorite";
+      toast.error(errorMessage);
     } finally {
       setFavoriteLoading((prev) => ({ ...prev, [noteId]: false }));
     }
