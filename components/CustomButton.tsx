@@ -16,7 +16,9 @@ import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
-
+import { useChat } from "ai/react"
+ 
+import { Chat } from "@/components/ui/chat"
 const AI_AVATAR = "/icons/note ai.png";
 const PLACEHOLDER_AVATAR =
   "https://api.dicebear.com/7.x/lorelei/svg?seed=user&backgroundColor=transparent";
@@ -105,9 +107,8 @@ function MessageBubble({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: isAi ? -10 : 10 }}
       transition={{ duration: 0.25 }}
-      className={`flex items-end gap-3 group ${
-        isAi ? "flex-row" : "flex-row-reverse"
-      }`}
+      className={`flex items-end gap-3 group ${isAi ? "flex-row" : "flex-row-reverse"
+        }`}
     >
       <Image
         src={msg.avatar}
@@ -117,23 +118,20 @@ function MessageBubble({
         className="rounded-full object-cover w-9 h-9 border border-gray-200 dark:border-neutral-700"
       />
       <div
-        className={`max-w-[80vw] md:max-w-lg flex flex-col ${
-          isAi ? "" : "items-end"
-        }`}
+        className={`max-w-[80vw] md:max-w-lg flex flex-col ${isAi ? "" : "items-end"
+          }`}
       >
         <span
-          className={`font-medium text-xs mb-1 select-none ${
-            isAi ? "text-gray-700 dark:text-neutral-300" : "text-primary"
-          }`}
+          className={`font-medium text-xs mb-1 select-none ${isAi ? "text-gray-700 dark:text-neutral-300" : "text-primary"
+            }`}
         >
           {msg.name}
         </span>
         <div
           className={`relative group/chat px-4 py-3 text-sm rounded-2xl whitespace-pre-wrap break-words 
-            ${
-              isAi
-                ? "bg-gradient-to-tr from-gray-50 to-gray-200 dark:from-[#000] dark:to-[#111] text-neutral-900 dark:text-neutral-50 border border-gray-200 dark:border-neutral-700 shadow"
-                : "bg-primary text-white border border-primary/10"
+            ${isAi
+              ? "bg-gradient-to-tr from-gray-50 to-gray-200 dark:from-[#000] dark:to-[#111] text-neutral-900 dark:text-neutral-50 border border-gray-200 dark:border-neutral-700 shadow"
+              : "bg-primary text-white border border-primary/10"
             }`}
         >
           {renderContent(msg.text)}
@@ -155,7 +153,7 @@ function MessageBubble({
                       detail: { text: msg.text },
                     });
                     window.dispatchEvent(event);
-                  } catch {}
+                  } catch { }
                 }}
                 className="text-xs text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-white/70 dark:bg-neutral-800/80 px-1.5 py-0.5 rounded"
                 tabIndex={-1}
@@ -213,6 +211,9 @@ const CustomButton = () => {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
+    const { messages, input, handleInputChange, handleSubmit, status, stop } =
+    useChat()
+    
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
@@ -398,9 +399,8 @@ const CustomButton = () => {
               type="submit"
               size="lg"
               disabled={loading || !title.trim()}
-              className={`px-6 py-3 rounded-lg text-white font-semibold bg-primary transition disabled:opacity-60 ${
-                loading || !title.trim() ? "cursor-not-allowed" : ""
-              }`}
+              className={`px-6 py-3 rounded-lg text-white font-semibold bg-primary transition disabled:opacity-60 ${loading || !title.trim() ? "cursor-not-allowed" : ""
+                }`}
             >
               {loading ? (
                 <Loader2 className="animate-spin" size={18} />

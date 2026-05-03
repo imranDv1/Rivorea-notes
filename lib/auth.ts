@@ -14,6 +14,12 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  	session: {
+		expiresIn: 60 * 60 * 24 * 30, // 30 days
+		updateAge: 60 * 60 * 24, // Refresh every day
+		disableSessionRefresh: false, // Enable auto-extension
+		freshAge: 60 * 15, // 15 minute freshness window
+	},
   plugins: [expo({})],
 
   socialProviders: {
