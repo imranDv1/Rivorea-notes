@@ -67,16 +67,18 @@ export async function POST(request: Request) {
     // normalize and keep fenced code blocks intact
     const styledBody = normalizeAiBody(body, title);
     return NextResponse.json({ body: styledBody }, { status: 200 });
-  // app/api/ai/route.ts — in the catch block
-} catch (error: any) {
-  console.error("AI Route Error:", error);
+  } catch (error: unknown) {
+    console.error("AI Route Error:", error);
 
-  return NextResponse.json(
-    {
-      message: error?.message || "Unknown error",
-      error,
-    },
-    { status: 500 }
-  );
-}
+    const message =
+      error instanceof Error ? error.message : "Unknown error";
+
+    return NextResponse.json(
+      {
+        message,
+        error: message,
+      },
+      { status: 500 }
+    );
+  }
 }

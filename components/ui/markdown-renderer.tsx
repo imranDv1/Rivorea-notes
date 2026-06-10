@@ -1,5 +1,5 @@
 import React, { Suspense } from "react"
-import Markdown from "react-markdown"
+import Markdown, { type Components } from "react-markdown"
 import remarkGfm from "remark-gfm"
 
 import { cn } from "@/lib/utils"
@@ -117,19 +117,21 @@ const CodeBlock = ({
   )
 }
 
-function childrenTakeAllStringContents(element: any): string {
+function childrenTakeAllStringContents(element: React.ReactNode): string {
   if (typeof element === "string") {
     return element
   }
 
-  if (element?.props?.children) {
-    let children = element.props.children
+  if (React.isValidElement<{ children?: React.ReactNode }>(element)) {
+    const children = element.props.children
 
     if (Array.isArray(children)) {
       return children
         .map((child) => childrenTakeAllStringContents(child))
         .join("")
-    } else {
+    }
+
+    if (children != null) {
       return childrenTakeAllStringContents(children)
     }
   }
@@ -137,7 +139,7 @@ function childrenTakeAllStringContents(element: any): string {
   return ""
 }
 
-const COMPONENTS = {
+const COMPONENTS: Components = {
   h1: withClass("h1", "text-2xl font-semibold"),
   h2: withClass("h2", "font-semibold text-xl"),
   h3: withClass("h3", "font-semibold text-lg"),
@@ -146,7 +148,7 @@ const COMPONENTS = {
   strong: withClass("strong", "font-semibold"),
   a: withClass("a", "text-primary underline underline-offset-2"),
   blockquote: withClass("blockquote", "border-l-2 border-primary pl-4"),
-  code: ({ children, className, node, ...rest }: any) => {
+  code: ({ children, className, ...rest }) => {
     const match = /language-(\w+)/.exec(className || "")
     return match ? (
       <CodeBlock className={className} language={match[1]} {...rest}>
@@ -163,7 +165,7 @@ const COMPONENTS = {
       </code>
     )
   },
-  pre: ({ children }: any) => children,
+  pre: ({ children }) => children,
   ol: withClass("ol", "list-decimal space-y-2 pl-6"),
   ul: withClass("ul", "list-disc space-y-2 pl-6"),
   li: withClass("li", "my-1.5"),
@@ -184,8 +186,8 @@ const COMPONENTS = {
   hr: withClass("hr", "border-foreground/20"),
 }
 
-function withClass(Tag: keyof JSX.IntrinsicElements, classes: string) {
-  const Component = ({ node, ...props }: any) => (
+function withClass(Tag: keyof React.JSX.IntrinsicElements, classes: string) {
+  const Component = (props: React.HTMLAttributes<HTMLElement>) => (
     <Tag className={classes} {...props} />
   )
   Component.displayName = Tag

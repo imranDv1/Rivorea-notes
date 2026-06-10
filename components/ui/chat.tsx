@@ -33,7 +33,7 @@ interface ChatPropsBase {
     messageId: string,
     rating: "thumbs-up" | "thumbs-down"
   ) => void
-  setMessages?: (messages: any[]) => void
+  setMessages?: (messages: Message[]) => void
   transcribeAudio?: (blob: Blob) => Promise<string>
 }
 
@@ -113,7 +113,7 @@ export function Chat({
     }
 
     if (lastAssistantMessage.parts && lastAssistantMessage.parts.length > 0) {
-      const updatedParts = lastAssistantMessage.parts.map((part: any) => {
+      const updatedParts = lastAssistantMessage.parts.map((part) => {
         if (
           part.type === "tool-invocation" &&
           part.toolInvocation &&

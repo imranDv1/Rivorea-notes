@@ -112,7 +112,7 @@ function AnimatedGroup({
   preset,
   as = "div",
   asChild = "div",
-}: AnimatedGroupProps) {
+}: AnimatedGroupProps): React.ReactElement {
   const selectedVariants = {
     item: addDefaultVariants(preset ? presetVariants[preset] : {}),
     container: addDefaultVariants(defaultContainerVariants),
@@ -120,14 +120,12 @@ function AnimatedGroup({
   const containerVariants = variants?.container || selectedVariants.container;
   const itemVariants = variants?.item || selectedVariants.item;
 
-  const MotionComponent = React.useMemo(
-    () => motion.create(as as keyof JSX.IntrinsicElements),
-    [as]
-  );
-  const MotionChild = React.useMemo(
-    () => motion.create(asChild as keyof JSX.IntrinsicElements),
-    [asChild]
-  );
+  const MotionComponent =
+    as === "div" ? motion.div : motion.create(as as keyof JSX.IntrinsicElements);
+  const MotionChild =
+    asChild === "div"
+      ? motion.div
+      : motion.create(asChild as keyof JSX.IntrinsicElements);
 
   return (
     <MotionComponent
@@ -142,7 +140,7 @@ function AnimatedGroup({
         </MotionChild>
       ))}
     </MotionComponent>
-  );
+  ) as React.ReactElement;
 }
 
 export { AnimatedGroup };
