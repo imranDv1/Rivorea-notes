@@ -38,7 +38,7 @@ export default function SignUpPage() {
     },
   });
 
-  // test 
+  // test
 
   const [Loading, setLoading] = useState(false);
   const [googlePending, startGoogleTransiton] = useTransition();
@@ -199,8 +199,11 @@ export default function SignUpPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow-md border-[0.5px] border-white/25 shadow-black/20 [&_svg]:drop-shadow-sm not-in-data-[theme=dark]:text-shadow-sm bg-primary ring-1 ring-(--ring-color) [--ring-color:color-mix(in_oklab,var(--color-foreground)15%,var(--color-primary))] text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2" disabled={Loading}>
-              
+                <Button
+                  type="submit"
+                  className="w-full cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap  text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow-md border-[0.5px] border-white/25 shadow-black/20 [&_svg]:drop-shadow-sm not-in-data-[theme=dark]:text-shadow-sm bg-primary ring-1 ring-(--ring-color) [--ring-color:color-mix(in_oklab,var(--color-foreground)15%,var(--color-primary))] text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2"
+                  disabled={Loading}
+                >
                   {Loading ? (
                     <>
                       <Loader2 className="size-4 animate-spin" />

@@ -118,7 +118,7 @@ function MessageBubble({
         alt={msg.name}
         width={32}
         height={32}
-        className="rounded-full object-cover w-8 h-8 border border-gray-200 dark:border-neutral-700 shrink-0 mb-0.5"
+        className=" object-cover w-8 h-8 border border-gray-200 dark:border-neutral-700 shrink-0 mb-0.5"
       />
 
       <div
@@ -131,7 +131,7 @@ function MessageBubble({
         </span>
 
         <div
-          className={`relative group/bubble px-4 py-3 text-sm rounded-2xl break-words
+          className={`relative group/bubble px-4 py-3 text-sm  break-words
           ${
             isAi
               ? "bg-white dark:bg-neutral-900 text-gray-800 dark:text-neutral-100 border border-gray-200 dark:border-neutral-800 shadow-sm rounded-tl-sm"
@@ -145,7 +145,7 @@ function MessageBubble({
             <div className="absolute -top-2 right-2 flex items-center gap-1 opacity-0 group-hover/bubble:opacity-100 transition-all duration-150 pointer-events-none group-hover/bubble:pointer-events-auto">
               <button
                 onClick={() => onCopy?.(msg.text)}
-                className="flex items-center gap-1 text-[11px] text-gray-500 hover:text-gray-800 dark:text-neutral-400 dark:hover:text-white bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 px-2 py-0.5 rounded-full shadow-sm transition-colors"
+                className="flex items-center gap-1 text-[11px] text-gray-500 hover:text-gray-800 dark:text-neutral-400 dark:hover:text-white bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 px-2 py-0.5  shadow-sm transition-colors"
                 title="Copy response"
               >
                 <Copy size={11} />
@@ -153,7 +153,7 @@ function MessageBubble({
               </button>
               <button
                 onClick={() => onWrite?.(msg.text)}
-                className="flex items-center gap-1 text-[11px] text-violet-600 hover:text-violet-800 dark:text-violet-400 dark:hover:text-violet-200 bg-white dark:bg-neutral-800 border border-violet-200 dark:border-violet-800 px-2 py-0.5 rounded-full shadow-sm transition-colors"
+                className="flex items-center gap-1 text-[11px] text-violet-600 hover:text-violet-800 dark:text-violet-400 dark:hover:text-violet-200 bg-white dark:bg-neutral-800 border border-violet-200 dark:border-violet-800 px-2 py-0.5  shadow-sm transition-colors"
                 title="Insert into editor"
               >
                 Write
@@ -181,14 +181,14 @@ function TypingIndicator() {
         alt="AI"
         width={32}
         height={32}
-        className="rounded-full w-8 h-8 border border-gray-200 dark:border-neutral-700"
+        className=" w-8 h-8 border border-gray-200 dark:border-neutral-700"
       />
-      <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
+      <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800  rounded-tl-sm px-4 py-3 shadow-sm">
         <div className="flex items-center gap-1.5">
           {[0, 1, 2].map((i) => (
             <motion.span
               key={i}
-              className="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-neutral-500 block"
+              className="w-1.5 h-1.5  bg-gray-400 dark:bg-neutral-500 block"
               animate={{ y: [0, -4, 0] }}
               transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
             />
@@ -337,7 +337,7 @@ const CustomButton = () => {
       </DialogTrigger>
 
       {/* ── Dialog ───────────────────────────────────────────────────────── */}
-      <DialogContent className="max-w-2xl w-[95vw] h-[82vh] flex flex-col p-0 overflow-hidden rounded-2xl shadow-2xl border border-gray-200 dark:border-neutral-800 bg-gray-50 dark:bg-neutral-950 focus:outline-none focus-visible:outline-none">
+      <DialogContent className="max-w-2xl w-[95vw] h-[82vh] flex flex-col p-0 overflow-hidden  shadow-2xl border border-gray-200 dark:border-neutral-800 bg-gray-50 dark:bg-neutral-950 focus:outline-none focus-visible:outline-none">
         {/* Header */}
         <DialogHeader className="shrink-0 bg-white dark:bg-neutral-900 border-b border-gray-200 dark:border-neutral-800 px-5 py-4">
           <DialogTitle className="flex items-center gap-3">
@@ -347,9 +347,9 @@ const CustomButton = () => {
                 alt="NoteBuddy"
                 width={36}
                 height={36}
-                className="rounded-full border-2 border-violet-200 dark:border-violet-900"
+                className=" border-2 border-violet-200 dark:border-violet-900"
               />
-              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white dark:border-neutral-900" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400  border-2 border-white dark:border-neutral-900" />
             </div>
             <div>
               <p className="text-sm font-semibold text-gray-900 dark:text-white leading-none">
@@ -395,7 +395,7 @@ const CustomButton = () => {
             {loading ? (
               <button
                 onClick={() => setLoading(false)}
-                className="shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-red-500 transition-colors"
+                className="shrink-0 p-1.5  text-gray-400 hover:text-red-500 transition-colors"
                 title="Stop"
               >
                 <StopCircle size={18} />
@@ -404,7 +404,7 @@ const CustomButton = () => {
               <button
                 onClick={sendMessage}
                 disabled={!inputValue.trim()}
-                className="shrink-0 p-1.5 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-500 text-white disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-all active:scale-95"
+                className="shrink-0 p-1.5  bg-gradient-to-br from-violet-500 to-indigo-500 text-white disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-all active:scale-95"
                 title="Send"
               >
                 <Send size={15} />

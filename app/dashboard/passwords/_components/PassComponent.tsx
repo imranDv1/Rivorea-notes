@@ -98,7 +98,7 @@ const PassComponent = ({ pass }: GetPass) => {
   const [EditLoading, setEditLoading] = useState(false);
   const [EditTarget, setEditTarget] = useState<Pass | null>(null);
   const refreshAddPass = useAddPassNotificationStore(
-    (state) => state.refreshAddPass
+    (state) => state.refreshAddPass,
   );
 
   const {
@@ -517,7 +517,7 @@ const PassComponent = ({ pass }: GetPass) => {
           </>
         )}
         {!isLoadingPasses && filteredPasses.length === 0 && (
-          <div className="col-span-full flex flex-col items-center justify-center py-16 text-center border rounded-lg">
+          <div className="col-span-full flex flex-col items-center justify-center py-16 text-center border ">
             <KeyRound className="mb-4" />
             <h3 className="text-xl font-semibold">No passwords yet</h3>
             <p className="text-muted-foreground mb-6">
@@ -537,7 +537,7 @@ const PassComponent = ({ pass }: GetPass) => {
                   <Badge
                     onClick={() =>
                       setActiveCategory((prev) =>
-                        prev === pass.category ? null : pass.category
+                        prev === pass.category ? null : pass.category,
                       )
                     }
                     className="cursor-pointer select-none"
@@ -584,7 +584,7 @@ const PassComponent = ({ pass }: GetPass) => {
                         onClick={(e) => {
                           const input =
                             e.currentTarget.parentElement?.parentElement?.querySelector(
-                              "input"
+                              "input",
                             ) as HTMLInputElement;
                           if (input) {
                             input.type =

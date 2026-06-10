@@ -1,12 +1,12 @@
-import React, { Suspense } from "react"
-import Markdown, { type Components } from "react-markdown"
-import remarkGfm from "remark-gfm"
+import React, { Suspense } from "react";
+import Markdown, { type Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
 
-import { cn } from "@/lib/utils"
-import { CopyButton } from "@/components/ui/copy-button"
+import { cn } from "@/lib/utils";
+import { CopyButton } from "@/components/ui/copy-button";
 
 interface MarkdownRendererProps {
-  children: string
+  children: string;
 }
 
 export function MarkdownRenderer({ children }: MarkdownRendererProps) {
@@ -16,20 +16,20 @@ export function MarkdownRenderer({ children }: MarkdownRendererProps) {
         {children}
       </Markdown>
     </div>
-  )
+  );
 }
 
 interface HighlightedPre extends React.HTMLAttributes<HTMLPreElement> {
-  children: string
-  language: string
+  children: string;
+  language: string;
 }
 
 const HighlightedPre = React.memo(
   async ({ children, language, ...props }: HighlightedPre) => {
-    const { codeToTokens, bundledLanguages } = await import("shiki")
+    const { codeToTokens, bundledLanguages } = await import("shiki");
 
     if (!(language in bundledLanguages)) {
-      return <pre {...props}>{children}</pre>
+      return <pre {...props}>{children}</pre>;
     }
 
     const { tokens } = await codeToTokens(children, {
@@ -39,7 +39,7 @@ const HighlightedPre = React.memo(
         light: "github-light",
         dark: "github-dark",
       },
-    })
+    });
 
     return (
       <pre {...props}>
@@ -51,7 +51,7 @@ const HighlightedPre = React.memo(
                   const style =
                     typeof token.htmlStyle === "string"
                       ? undefined
-                      : token.htmlStyle
+                      : token.htmlStyle;
 
                   return (
                     <span
@@ -61,7 +61,7 @@ const HighlightedPre = React.memo(
                     >
                       {token.content}
                     </span>
-                  )
+                  );
                 })}
               </span>
               {lineIndex !== tokens.length - 1 && "\n"}
@@ -69,15 +69,15 @@ const HighlightedPre = React.memo(
           ))}
         </code>
       </pre>
-    )
-  }
-)
-HighlightedPre.displayName = "HighlightedCode"
+    );
+  },
+);
+HighlightedPre.displayName = "HighlightedCode";
 
 interface CodeBlockProps extends React.HTMLAttributes<HTMLPreElement> {
-  children: React.ReactNode
-  className?: string
-  language: string
+  children: React.ReactNode;
+  className?: string;
+  language: string;
 }
 
 const CodeBlock = ({
@@ -89,12 +89,12 @@ const CodeBlock = ({
   const code =
     typeof children === "string"
       ? children
-      : childrenTakeAllStringContents(children)
+      : childrenTakeAllStringContents(children);
 
   const preClass = cn(
-    "overflow-x-scroll rounded-md border bg-background/50 p-4 font-mono text-sm [scrollbar-width:none]",
-    className
-  )
+    "overflow-x-scroll  border bg-background/50 p-4 font-mono text-sm [scrollbar-width:none]",
+    className,
+  );
 
   return (
     <div className="group/code relative mb-4">
@@ -110,33 +110,33 @@ const CodeBlock = ({
         </HighlightedPre>
       </Suspense>
 
-      <div className="invisible absolute right-2 top-2 flex space-x-1 rounded-lg p-1 opacity-0 transition-all duration-200 group-hover/code:visible group-hover/code:opacity-100">
+      <div className="invisible absolute right-2 top-2 flex space-x-1  p-1 opacity-0 transition-all duration-200 group-hover/code:visible group-hover/code:opacity-100">
         <CopyButton content={code} copyMessage="Copied code to clipboard" />
       </div>
     </div>
-  )
-}
+  );
+};
 
 function childrenTakeAllStringContents(element: React.ReactNode): string {
   if (typeof element === "string") {
-    return element
+    return element;
   }
 
   if (React.isValidElement<{ children?: React.ReactNode }>(element)) {
-    const children = element.props.children
+    const children = element.props.children;
 
     if (Array.isArray(children)) {
       return children
         .map((child) => childrenTakeAllStringContents(child))
-        .join("")
+        .join("");
     }
 
     if (children != null) {
-      return childrenTakeAllStringContents(children)
+      return childrenTakeAllStringContents(children);
     }
   }
 
-  return ""
+  return "";
 }
 
 function withClass(Tag: keyof React.JSX.IntrinsicElements, classes: string) {
@@ -145,16 +145,16 @@ function withClass(Tag: keyof React.JSX.IntrinsicElements, classes: string) {
     className,
     ...props
   }: {
-    node?: unknown
-    className?: string
-    children?: React.ReactNode
+    node?: unknown;
+    className?: string;
+    children?: React.ReactNode;
   }) =>
     React.createElement(Tag, {
       className: cn(classes, className),
       ...props,
-    })
-  Component.displayName = Tag
-  return Component
+    });
+  Component.displayName = Tag;
+  return Component;
 }
 
 const COMPONENTS: Components = {
@@ -167,7 +167,7 @@ const COMPONENTS: Components = {
   a: withClass("a", "text-primary underline underline-offset-2"),
   blockquote: withClass("blockquote", "border-l-2 border-primary pl-4"),
   code: ({ children, className, ...rest }) => {
-    const match = /language-(\w+)/.exec(className || "")
+    const match = /language-(\w+)/.exec(className || "");
     return match ? (
       <CodeBlock className={className} language={match[1]} {...rest}>
         {children}
@@ -175,13 +175,13 @@ const COMPONENTS: Components = {
     ) : (
       <code
         className={cn(
-          "font-mono [:not(pre)>&]:rounded-md [:not(pre)>&]:bg-background/50 [:not(pre)>&]:px-1 [:not(pre)>&]:py-0.5"
+          "font-mono [:not(pre)>&]: [:not(pre)>&]:bg-background/50 [:not(pre)>&]:px-1 [:not(pre)>&]:py-0.5",
         )}
         {...rest}
       >
         {children}
       </code>
-    )
+    );
   },
   pre: ({ children }) => children,
   ol: withClass("ol", "list-decimal space-y-2 pl-6"),
@@ -189,19 +189,19 @@ const COMPONENTS: Components = {
   li: withClass("li", "my-1.5"),
   table: withClass(
     "table",
-    "w-full border-collapse overflow-y-auto rounded-md border border-foreground/20"
+    "w-full border-collapse overflow-y-auto  border border-foreground/20",
   ),
   th: withClass(
     "th",
-    "border border-foreground/20 px-4 py-2 text-left font-bold [&[align=center]]:text-center [&[align=right]]:text-right"
+    "border border-foreground/20 px-4 py-2 text-left font-bold [&[align=center]]:text-center [&[align=right]]:text-right",
   ),
   td: withClass(
     "td",
-    "border border-foreground/20 px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right"
+    "border border-foreground/20 px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right",
   ),
   tr: withClass("tr", "m-0 border-t p-0 even:bg-muted"),
   p: withClass("p", "whitespace-pre-wrap"),
   hr: withClass("hr", "border-foreground/20"),
-}
+};
 
-export default MarkdownRenderer
+export default MarkdownRenderer;

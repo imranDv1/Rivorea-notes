@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -17,7 +16,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             color: "#fff", // text color
             border: "1px solid #333",
           },
-          className: "rounded-2xl shadow-lg", // apply Tailwind classes
+          className: " shadow-lg", // apply Tailwind classes
         }}
       />
     </>

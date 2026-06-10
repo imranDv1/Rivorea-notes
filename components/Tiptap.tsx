@@ -41,7 +41,7 @@ const RichTextEditor = ({ content, noteId }: RichTextEditorProps) => {
     autofocus: true,
     editable: true,
     injectCSS: false,
-    onUpdate: ({  }) => {
+    onUpdate: ({}) => {
       if (noteId) {
         // save content here
       }
@@ -86,7 +86,7 @@ const RichTextEditor = ({ content, noteId }: RichTextEditorProps) => {
   };
 
   return (
-    <div className="w-full max-w-[98%]  bg-card text-card-foreground rounded-lg overflow-hidden border">
+    <div className="w-full max-w-[98%]  bg-card text-card-foreground  overflow-hidden border">
       {/* Toolbar */}
       <div className="flex items-center gap-1 p-2 bg-muted/50 border-b">
         {/* Undo/Redo */}

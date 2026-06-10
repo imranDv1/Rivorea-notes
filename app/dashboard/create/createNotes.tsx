@@ -176,7 +176,7 @@ const NoteCard = ({
 
   return (
     <div
-      className="group relative flex flex-col rounded-none shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 overflow-hidden"
+      className="group relative flex flex-col rounded-none  overflow-hidden"
       style={{
         backgroundColor: color.bg,
         borderTop: `4px solid ${color.border}`,
@@ -713,7 +713,7 @@ const CreateNotesPage = ({ notes }: CreateNotesProps) => {
         </div>
 
         {/* Search */}
-        <div className="relative flex-1 max-w-xs">
+        <div className="relative flex-1 lg:max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400 pointer-events-none" />
           <input
             type="text"

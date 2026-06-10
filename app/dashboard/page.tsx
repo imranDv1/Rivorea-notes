@@ -1,6 +1,16 @@
 import Link from "next/link";
 import { cn } from "@/lib/tiptap-utils";
-import { FileKey2, Notebook, PenLine, Share2, Tag, ShieldCheck, Copy, Lock, ArrowRight } from "lucide-react";
+import {
+  FileKey2,
+  Notebook,
+  PenLine,
+  Share2,
+  Tag,
+  ShieldCheck,
+  Copy,
+  Lock,
+  ArrowRight,
+} from "lucide-react";
 
 const tools = [
   {
@@ -42,17 +52,24 @@ export default function Page() {
           <div className="absolute -top-3 left-0 h-4 w-24 rounded-t-lg bg-primary/50 border border-b-0 border-primary/30" />
 
           {/* Folder body */}
-          <div className="relative rounded-lg rounded-tl-none border border-primary/50 bg-primary/13 hover:bg-primary/10 transition-colors duration-200 p-5 pt-6">
-            <div className="mb-3 w-10 h-10 rounded-md bg-primary/15 flex items-center justify-center">
+          <div className="relative  rounded-tl-none border border-primary/50 bg-primary/13 hover:bg-primary/10 transition-colors duration-200 p-5 pt-6">
+            <div className="mb-3 w-10 h-10  bg-primary/15 flex items-center justify-center">
               <Icon className="size-5 text-primary" />
             </div>
 
-            <p className="text-sm font-semibold text-foreground mb-1">{title}</p>
-            <p className="text-xs text-muted-foreground leading-relaxed mb-4">{description}</p>
+            <p className="text-sm font-semibold text-foreground mb-1">
+              {title}
+            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+              {description}
+            </p>
 
             <ul className="space-y-1.5 mb-4">
               {features.map(({ icon: FIcon, text }) => (
-                <li key={text} className="flex items-center gap-2 text-xs text-muted-foreground">
+                <li
+                  key={text}
+                  className="flex items-center gap-2 text-xs text-muted-foreground"
+                >
                   <FIcon className="size-3 shrink-0 text-primary/70" />
                   {text}
                 </li>
