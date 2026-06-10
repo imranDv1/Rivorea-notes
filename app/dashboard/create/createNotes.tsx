@@ -270,6 +270,7 @@ const NoteCard = ({
         <div className="flex items-center gap-1">
           <Link
             href={`notes/${note.id}`}
+            prefetch={true}
             className="text-xs font-medium px-2.5 py-1  transition-colors hover:bg-white/70"
             style={{ color: color.accent }}
           >

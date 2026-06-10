@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { cn } from "@/lib/tiptap-utils";
 import {
   FileKey2,
   Notebook,
@@ -16,7 +15,6 @@ const tools = [
   {
     href: "/dashboard/create",
     icon: Notebook,
-    label: "Notes",
     title: "Notes",
     description: "Write, organise, and share your notes — all in one place.",
     features: [
@@ -28,7 +26,6 @@ const tools = [
   {
     href: "/dashboard/passwords",
     icon: FileKey2,
-    label: "Passwords",
     title: "Password Manager",
     description: "One encrypted vault for every credential you own.",
     features: [
@@ -41,48 +38,87 @@ const tools = [
 
 export default function Page() {
   return (
-    <div className="mt-5 flex flex-wrap gap-6">
-      {tools.map(({ href, icon: Icon, title, description, features }) => (
-        <Link
-          key={href}
-          href={href}
-          className="group relative min-w-sm focus:outline-none"
-        >
-          {/* Folder tab */}
-          <div className="absolute -top-3 left-0 h-4 w-24 rounded-t-lg bg-primary/50 border border-b-0 border-primary/30" />
+    <div className="mt-6 grid gap-6 sm:grid-cols-2">
+      {tools.map(
+        ({ href, icon: Icon, title, description, features }) => (
+          <Link
+            key={href}
+            href={href}
+            className="group relative"
+          >
+            {/* Folder Tab */}
+            <div className="absolute -top-3 left-5 h-4 w-24 rounded-t-xl border border-b-0 border-primary/20 bg-primary/10 backdrop-blur-sm" />
 
-          {/* Folder body */}
-          <div className="relative  rounded-tl-none border border-primary/50 bg-primary/13 hover:bg-primary/10 transition-colors duration-200 p-5 pt-6">
-            <div className="mb-3 w-10 h-10  bg-primary/15 flex items-center justify-center">
-              <Icon className="size-5 text-primary" />
+            <div
+              className="
+                relative h-full overflow-hidden
+                rounded-2xl rounded-tl-md
+                border border-border/60
+                bg-card
+                p-6 pt-7
+                shadow-sm
+                transition-all duration-300
+                hover:border-primary/40
+                hover:shadow-xl
+              "
+            >
+              {/* Glow */}
+              <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
+              </div>
+
+              {/* Icon */}
+              <div
+                className="
+                  relative mb-5 flex h-12 w-12 items-center justify-center
+                  rounded-xl border border-primary/15
+                  bg-primary/10
+                "
+              >
+                <Icon className="size-6 text-primary" />
+              </div>
+
+              {/* Content */}
+              <div className="relative">
+                <h3 className="text-base font-semibold tracking-tight">
+                  {title}
+                </h3>
+
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {description}
+                </p>
+
+                <ul className="mt-5 space-y-3">
+                  {features.map(({ icon: FeatureIcon, text }) => (
+                    <li
+                      key={text}
+                      className="flex items-center gap-3 text-sm text-muted-foreground"
+                    >
+                      <FeatureIcon className="size-4 text-primary/70" />
+                      <span>{text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Footer */}
+              <div className="relative mt-6 flex items-center justify-between border-t border-border/50 pt-4">
+                <span className="text-sm font-medium text-primary">
+                  Open Tool
+                </span>
+
+                <ArrowRight
+                  className="
+                    size-4 text-primary
+                    transition-transform duration-300
+                    group-hover:translate-x-1
+                  "
+                />
+              </div>
             </div>
-
-            <p className="text-sm font-semibold text-foreground mb-1">
-              {title}
-            </p>
-            <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-              {description}
-            </p>
-
-            <ul className="space-y-1.5 mb-4">
-              {features.map(({ icon: FIcon, text }) => (
-                <li
-                  key={text}
-                  className="flex items-center gap-2 text-xs text-muted-foreground"
-                >
-                  <FIcon className="size-3 shrink-0 text-primary/70" />
-                  {text}
-                </li>
-              ))}
-            </ul>
-
-            <div className="flex items-center justify-between pt-3 border-t border-primary/20">
-              <span className="text-xs font-medium text-primary">Open</span>
-              <ArrowRight className="size-3.5 text-primary transition-transform group-hover:translate-x-0.5" />
-            </div>
-          </div>
-        </Link>
-      ))}
+          </Link>
+        )
+      )}
     </div>
   );
 }

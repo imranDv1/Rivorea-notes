@@ -45,6 +45,7 @@ const Page = (props: { params: Promise<tParams> }) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userId }),
+          cache: "force-cache",
         });
 
         if (!res.ok) throw new Error("Failed to fetch MAX_CHARS");
@@ -71,6 +72,7 @@ const Page = (props: { params: Promise<tParams> }) => {
       try {
         const res = await fetch("/api/notebody", {
           method: "POST",
+          cache: "force-cache",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userId, noteId: params.id }),
         });
