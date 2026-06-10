@@ -8,7 +8,7 @@ import Image from "next/image";
 import { TextEffect } from "@/components/ui/text-effect";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { HeroHeader } from "./header";
-import type { Variants } from "framer-motion";
+import type { Variants } from "motion/react";
 
 import { BorderBeam } from "./ui/border-beam";
 import { authClient } from "@/lib/auth-client";

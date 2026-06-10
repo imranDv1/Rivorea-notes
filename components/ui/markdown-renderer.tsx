@@ -139,6 +139,24 @@ function childrenTakeAllStringContents(element: React.ReactNode): string {
   return ""
 }
 
+function withClass(Tag: keyof React.JSX.IntrinsicElements, classes: string) {
+  const Component = ({
+    node: _node,
+    className,
+    ...props
+  }: {
+    node?: unknown
+    className?: string
+    children?: React.ReactNode
+  }) =>
+    React.createElement(Tag, {
+      className: cn(classes, className),
+      ...props,
+    })
+  Component.displayName = Tag
+  return Component
+}
+
 const COMPONENTS: Components = {
   h1: withClass("h1", "text-2xl font-semibold"),
   h2: withClass("h2", "font-semibold text-xl"),
@@ -184,14 +202,6 @@ const COMPONENTS: Components = {
   tr: withClass("tr", "m-0 border-t p-0 even:bg-muted"),
   p: withClass("p", "whitespace-pre-wrap"),
   hr: withClass("hr", "border-foreground/20"),
-}
-
-function withClass(Tag: keyof React.JSX.IntrinsicElements, classes: string) {
-  const Component = (props: React.HTMLAttributes<HTMLElement>) => (
-    <Tag className={classes} {...props} />
-  )
-  Component.displayName = Tag
-  return Component
 }
 
 export default MarkdownRenderer
