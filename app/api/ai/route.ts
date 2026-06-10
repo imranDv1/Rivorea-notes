@@ -67,11 +67,16 @@ export async function POST(request: Request) {
     // normalize and keep fenced code blocks intact
     const styledBody = normalizeAiBody(body, title);
     return NextResponse.json({ body: styledBody }, { status: 200 });
-  } catch (error) {
-    console.error("Error in AI route:", error);
-    return NextResponse.json(
-      { message: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
+  // app/api/ai/route.ts — in the catch block
+} catch (error: any) {
+  console.error("AI Route Error:", error);
+
+  return NextResponse.json(
+    {
+      message: error?.message || "Unknown error",
+      error,
+    },
+    { status: 500 }
+  );
+}
 }

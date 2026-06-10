@@ -84,8 +84,10 @@ import Link from "next/link";
 import CustomButton from "@/components/CustomButton";
 import { useEditorNotificationStore } from "@/context/simpleEditorupddate";
 import { convertMarkdownHeadingsToHtml } from "@/lib/converMarkdownHeading";
-import { authClient } from "@/lib/auth-client";
 
+// --- Fix 1: Removed unused `authClient` import ---
+
+// --- Fix 2: Removed `onSave` from MainToolbarContent props (was declared but never used) ---
 const MainToolbarContent = ({
   onHighlighterClick,
   onLinkClick,
@@ -94,9 +96,8 @@ const MainToolbarContent = ({
   onHighlighterClick: () => void;
   onLinkClick: () => void;
   isMobile: boolean;
-  onSave: () => void;
 }) => {
-  const imageUploadRef = React.useRef<any>(null);
+  // --- Fix 3: Removed unused `imageUploadRef` ---
 
   return (
     <>
@@ -152,6 +153,7 @@ const MainToolbarContent = ({
       </ToolbarGroup>
 
       <ToolbarSeparator />
+
       <ToolbarGroup>
         <ImageUploadButton />
       </ToolbarGroup>
@@ -220,6 +222,8 @@ export function SimpleEditor({
     !content ||
       (typeof content === "object" && Object.keys(content).length === 0)
   );
+  const [charCount, setCharCount] = React.useState(0);
+  const [saveLoading, setSaveLoading] = React.useState(false); // Fix 4: renamed SaveLoading → saveLoading (camelCase convention)
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -228,7 +232,6 @@ export function SimpleEditor({
     content: (() => {
       if (!content) return "";
       if (typeof content === "string")
-        // Convert Markdown headings (#, ##, ###, ...) to HTML <h1>-<h6> before passing to TipTap
         return convertMarkdownHeadingsToHtml(content);
       try {
         return content as JSONContent;
@@ -238,6 +241,9 @@ export function SimpleEditor({
     })(),
     editorProps: {
       attributes: {
+        autocomplete: "off",
+        autocorrect: "off",
+        autocapitalize: "off",
         class: "simple-editor",
       },
     },
@@ -261,9 +267,7 @@ export function SimpleEditor({
         maxSize: MAX_FILE_SIZE,
         limit: limit,
         upload: async (file: File) => {
-          const { previewUrl, file: originalFile } = await handleImageUpload(
-            file
-          );
+          const { previewUrl, file: originalFile } = await handleImageUpload(file);
           setUploadedFiles((prev) => [...prev, originalFile]);
           return previewUrl;
         },
@@ -280,34 +284,38 @@ export function SimpleEditor({
     ],
   });
 
-  const [charCount, setCharCount] = React.useState(0);
+  // Fix 5: checkMaxContent now correctly uses editor.chain() instead of
+  // transaction.deleteRange() which doesn't exist on a TipTap transaction object.
+  // Also added MAX_CHARS to the dependency array.
   React.useEffect(() => {
     if (!editor) return;
 
-    const checkMaxContent = ({ transaction }: any) => {
+    const checkMaxContent = () => {
       const textLength = editor.getText().length;
       if (textLength > MAX_CHARS) {
-        transaction.deleteRange({ from: MAX_CHARS, to: textLength });
+        editor.chain().deleteRange({ from: MAX_CHARS, to: textLength }).run();
         toast.error(`Maximum content length is ${MAX_CHARS} characters!`);
       }
     };
 
-    editor.on("transaction", checkMaxContent);
+    editor.on("update", checkMaxContent);
 
     return () => {
-      editor.off("transaction", checkMaxContent);
+      editor.off("update", checkMaxContent);
     };
-  }, [editor]);
+  }, [editor, MAX_CHARS]); // Fix 6: added MAX_CHARS to deps
 
   // Listen for insert requests from the AI dialog and insert at cursor
   React.useEffect(() => {
     if (!editor) return;
+
     const handleInsert = (e: Event) => {
       const custom = e as CustomEvent<{ text?: string }>;
       const value = custom.detail?.text?.toString();
       if (!value) return;
-      // Ensure we are in edit mode and focus the editor
+
       setEdit(true);
+
       const codeRegex = /```([\w-]*)\n([\s\S]*?)```/g;
       let lastIndex = 0;
       const parts: Array<{
@@ -316,6 +324,7 @@ export function SimpleEditor({
         lang?: string;
       }> = [];
       let match: RegExpExecArray | null;
+
       while ((match = codeRegex.exec(value)) !== null) {
         if (match.index > lastIndex) {
           parts.push({
@@ -330,6 +339,7 @@ export function SimpleEditor({
         });
         lastIndex = codeRegex.lastIndex;
       }
+
       if (lastIndex < value.length) {
         parts.push({ type: "text", content: value.slice(lastIndex) });
       }
@@ -347,28 +357,26 @@ export function SimpleEditor({
         }
       }
       chain.run();
-      // Scroll editor into view
+
       try {
         (editor.view.dom as HTMLElement).scrollIntoView({
           behavior: "smooth",
           block: "center",
         });
-      } catch {}
+      } catch {
+        // ignore scroll errors silently
+      }
+
       toast.success("Added to editor");
     };
-    window.addEventListener(
-      "rivorea-insert-note",
-      handleInsert as EventListener
-    );
+
+    window.addEventListener("rivorea-insert-note", handleInsert as EventListener);
     return () => {
-      window.removeEventListener(
-        "rivorea-insert-note",
-        handleInsert as EventListener
-      );
+      window.removeEventListener("rivorea-insert-note", handleInsert as EventListener);
     };
   }, [editor]);
 
-  // 🔑 Sync editor editable with `edit`
+  // Sync editor editable state with `edit`
   React.useEffect(() => {
     if (editor) {
       editor.setEditable(edit);
@@ -380,6 +388,7 @@ export function SimpleEditor({
     overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
   });
 
+  // Fix 7: Added MAX_CHARS to charCount effect deps (referenced inside but was missing)
   React.useEffect(() => {
     if (!editor) return;
 
@@ -388,32 +397,28 @@ export function SimpleEditor({
     };
 
     editor.on("transaction", updateCharCount);
-    // initialize count
     updateCharCount();
 
     return () => {
       editor.off("transaction", updateCharCount);
     };
-  }, [editor]);
+  }, [editor, MAX_CHARS]);
 
   React.useEffect(() => {
     if (!isMobile && mobileView !== "main") setMobileView("main");
   }, [isMobile, mobileView]);
 
-  const [SaveLoading, setLoading] = React.useState(false);
-
   const handleSave = async () => {
     if (!editor) return;
+
     const contentLength = editor.getText().length;
     if (contentLength > MAX_CHARS) {
-      toast.error(
-        `Cannot save! Maximum allowed content is ${MAX_CHARS} characters.`
-      );
+      toast.error(`Cannot save! Maximum allowed content is ${MAX_CHARS} characters.`);
       return;
     }
 
     const contentJSON = JSON.stringify(editor.getJSON());
-    setLoading(true);
+    setSaveLoading(true);
 
     const formData = new FormData();
     formData.append("noteId", noteId);
@@ -423,22 +428,28 @@ export function SimpleEditor({
       formData.append("images", file);
     }
 
-    const res = await fetch("/api/note-body", {
-      method: "POST",
-      body: formData,
-    });
-    const data = await res.json();
-    if (data.success) {
-      toast.success("Note saved successfully!");
-      setLoading(false);
+    try {
+      const res = await fetch("/api/note-body", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
 
-      triggerEditorRefresh();
-    } else {
-      toast.error("Error: " + data.error);
-      setLoading(false);
+      if (data.success) {
+        toast.success("Note saved!");
+        setUploadedFiles([]); // Fix 8: clear uploaded files after successful save to avoid re-uploading
+        triggerEditorRefresh();
+      } else {
+        toast.error("Error: " + data.error);
+      }
+    } catch {
+      toast.error("Failed to save. Please check your connection.");
+    } finally {
+      setSaveLoading(false); // Fix 9: use finally so loading always resets even on network errors
     }
   };
 
+  // Fix 10: cleaned up redundant whitespace in className strings below
   return (
     <div className="w-full flex flex-col items-center mt-4 gap-4">
       <div className="w-full flex lg:flex-row flex-col justify-end gap-4 items-center">
@@ -456,19 +467,17 @@ export function SimpleEditor({
               </ShadcnButton>
             </div>
           ) : (
-            <>
-              <Link
-                className={buttonVariants({ variant: "outline" })}
-                href="/dashboard/create"
-              >
-                <CornerDownLeft />
-              </Link>
-            </>
+            <Link
+              className={buttonVariants({ variant: "outline" })}
+              href="/dashboard/create"
+            >
+              <CornerDownLeft />
+            </Link>
           )}
         </div>
 
-        {edit ? (
-          <div className="w-full flex items-center justify-end   gap-4 ">
+        {edit && (
+          <div className="w-full flex items-center justify-end gap-4">
             <span
               className={`text-sm ${
                 charCount > MAX_CHARS ? "text-red-500" : "text-primary"
@@ -477,41 +486,41 @@ export function SimpleEditor({
               {charCount}/{MAX_CHARS}
             </span>
 
-            <span></span>
-            {/* the ai button open dialog 👇 */}
+            {/* AI assistant button */}
             <CustomButton />
 
-            <ShadcnButton disabled={SaveLoading} size="sm" onClick={handleSave}>
-              {SaveLoading ? (
+            <ShadcnButton disabled={saveLoading} size="sm" onClick={handleSave}>
+              {saveLoading ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
-                  <span>Saving....</span>
+                  <span>Saving…</span>
                 </>
               ) : (
                 <>
-                  <Save /> Save
+                  <Save />
+                  Save
                 </>
               )}
             </ShadcnButton>
           </div>
-        ) : null}
+        )}
       </div>
+
       <EditorContext.Provider value={{ editor }}>
         {edit && (
           <Toolbar
             ref={toolbarRef}
-            style={{
-              ...(isMobile
+            style={
+              isMobile
                 ? { bottom: `calc(100% - ${height - rect.y}px)` }
-                : {}),
-            }}
+                : undefined
+            }
           >
             {mobileView === "main" ? (
               <MainToolbarContent
                 onHighlighterClick={() => setMobileView("highlighter")}
                 onLinkClick={() => setMobileView("link")}
                 isMobile={isMobile}
-                onSave={handleSave}
               />
             ) : (
               <MobileToolbarContent
@@ -525,7 +534,7 @@ export function SimpleEditor({
         <EditorContent
           editor={editor}
           role="presentation"
-          className="w-[100%] mt-2"
+          className="w-full mt-2"
         />
       </EditorContext.Provider>
     </div>
